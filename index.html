@@ -1059,6 +1059,154 @@ body {
   font-weight: 600;
   letter-spacing: 0.03em;
 }
+
+/* ===========================
+   分享引导弹窗
+   =========================== */
+.share-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.share-guide-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUp {
+  from { opacity: 0; transform: scale(0.85) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.share-guide-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.share-guide-card p {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.share-guide-steps {
+  text-align: left;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.share-guide-steps .step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+}
+
+.share-guide-steps .step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.share-guide-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.share-guide-actions button {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: none;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.share-guide-actions button:active {
+  transform: scale(0.95);
+}
+
+.share-guide-actions .btn-screenshot-guide {
+  background: var(--accent);
+  color: #fff;
+}
+
+.share-guide-actions .btn-close-guide {
+  background: var(--bg);
+  color: var(--text-secondary);
+}
+
+/* 分享浮动按钮 */
+.share-float-btn {
+  position: fixed;
+  bottom: 170px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: #fff;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+  z-index: 100;
+  transition: var(--transition);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+}
+
+.share-float-btn:active {
+  transform: scale(0.9);
+}
+
+@media (max-width: 480px) {
+  .share-float-btn {
+    bottom: 150px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+}
 .share-card {
   position: fixed;
   left: -9999px;
@@ -1468,6 +1616,28 @@ body {
   <div class="reveal-orb" id="reveal-orb"></div>
   <div class="reveal-name" id="reveal-name"></div>
 </div>
+
+<!-- ===========================
+  分享引导弹窗
+  =========================== -->
+<div class="share-guide-overlay" id="share-guide-overlay" style="display:none;">
+  <div class="share-guide-card">
+    <h3>📤 分享到朋友圈</h3>
+    <p>让朋友也测测，看谁和你是绝配 ✨</p>
+    <div class="share-guide-steps">
+      <div class="step"><span class="step-num">1</span> 点下方「截图保存」</div>
+      <div class="step"><span class="step-num">2</span> 打开微信朋友圈</div>
+      <div class="step"><span class="step-num">3</span> 发图 + 配文「我测出来是 XX 色，你是啥？」</div>
+    </div>
+    <div class="share-guide-actions">
+      <button class="btn-screenshot-guide" id="btn-screenshot-guide">📸 截图保存</button>
+      <button class="btn-close-guide" id="btn-close-guide">暂时不了</button>
+    </div>
+  </div>
+</div>
+
+<!-- 分享浮动按钮 -->
+<button class="share-float-btn" id="share-float-btn" title="分享给朋友" style="display:none;">📤</button>
 
 <!-- ===========================
   分享名片（隐藏，截图时使用）
@@ -1977,6 +2147,12 @@ function showPage(pageName) {
   page.style.animation = 'none';
   page.offsetHeight; // reflow
   page.style.animation = '';
+
+  // 分享浮动按钮仅结果页显示
+  const floatBtn = $('#share-float-btn');
+  if (floatBtn) {
+    floatBtn.style.display = (pageName === 'result') ? 'flex' : 'none';
+  }
 }
 
 /* ============================================================
@@ -3166,6 +3342,53 @@ function renderResultActions() {
     <button class="btn-action btn-screenshot" type="button">📸 截图保存</button>
   `;
   lastCard.insertAdjacentElement('afterend', actions);
+
+  // 显示分享浮动按钮
+  const floatBtn = $('#share-float-btn');
+  if (floatBtn) floatBtn.style.display = 'flex';
+
+  // 5 秒后弹出分享引导（仅首次）
+  const hasSeenGuide = sessionStorage.getItem('seen-share-guide');
+  if (!hasSeenGuide) {
+    setTimeout(() => {
+      showShareGuide();
+      sessionStorage.setItem('seen-share-guide', '1');
+    }, 5000);
+  }
+}
+
+/* ============================================================
+   📤 分享引导弹窗
+   ============================================================ */
+function showShareGuide() {
+  const overlay = $('#share-guide-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+}
+
+function hideShareGuide() {
+  const overlay = $('#share-guide-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+// 弹窗中的截图按钮
+$('#btn-screenshot-guide').addEventListener('click', () => {
+  hideShareGuide();
+  screenshotResult();
+});
+
+// 关闭弹窗
+$('#btn-close-guide').addEventListener('click', hideShareGuide);
+
+// 点击遮罩关闭
+$('#share-guide-overlay').addEventListener('click', (e) => {
+  if (e.target === $('#share-guide-overlay')) hideShareGuide();
+});
+
+// 浮动分享按钮点击
+const shareFloatBtn = $('#share-float-btn');
+if (shareFloatBtn) {
+  shareFloatBtn.addEventListener('click', showShareGuide);
 }
 
 /* ============================================================
