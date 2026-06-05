@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>色彩人格测试 · 宣传海报</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:#e8e4ef;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;
+}
+.poster{
+  width:800px;min-height:1200px;background:#fff;border-radius:32px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(60,40,80,0.15);position:relative;
+}
+
+/* 顶部渐变 */
+.poster-header{
+  background:linear-gradient(160deg,#f5f0fa 0%,#fdf2e8 25%,#f0f5ee 45%,#fdf4f8 65%,#edf2f8 80%,#f3eff8 95%);
+  padding:48px 40px 36px;text-align:center;position:relative;overflow:hidden;
+}
+.poster-header::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 30%,rgba(244,164,96,0.15),transparent 50%),
+             radial-gradient(circle at 75% 70%,rgba(155,126,196,0.15),transparent 50%),
+             radial-gradient(circle at 50% 50%,rgba(125,155,118,0.08),transparent 50%);
+}
+.poster-title{
+  font-size:3rem;font-weight:800;letter-spacing:.06em;
+  background:linear-gradient(135deg,#9b7ec4,#7b5ea7,#c75b5b,#f4a460,#5eab8a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;position:relative;margin-bottom:8px;
+}
+.poster-subtitle{font-size:1.2rem;color:#8b8598;position:relative;letter-spacing:.08em}
+.poster-tagline{font-size:1rem;color:#b5b0c0;position:relative;margin-top:4px}
+
+/* 色轮区 */
+.color-wheel{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:28px 40px;
+  background:#faf9fb;border-top:1px solid #f0edf5;border-bottom:1px solid #f0edf5;
+}
+.color-dot{
+  width:56px;height:56px;border-radius:50%;position:relative;cursor:default;
+  transition:transform .3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.1);
+}
+.color-dot:hover{transform:scale(1.25);z-index:2}
+.color-dot .tooltip{
+  position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);
+  font-size:.65rem;color:#6b6580;white-space:nowrap;font-weight:600;
+  opacity:0;transition:opacity .3s ease;
+}
+.color-dot:hover .tooltip{opacity:1}
+
+/* 内容区 */
+.poster-body{padding:32px 40px}
+.section-title{font-size:1.4rem;font-weight:700;color:#3a3548;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* 特点卡片 */
+.features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:28px}
+.feature-card{
+  background:#faf9fb;border-radius:18px;padding:18px 14px;text-align:center;
+  transition:transform .3s ease;
+}
+.feature-card:hover{transform:translateY(-3px)}
+.feature-icon{font-size:2rem;margin-bottom:6px;display:block}
+.feature-title{font-size:.9rem;font-weight:600;color:#3a3548}
+.feature-desc{font-size:.75rem;color:#8b8598;margin-top:4px;line-height:1.4}
+
+/* 9色预览 */
+.personality-list{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px}
+.personality-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  background:#faf9fb;transition:transform .3s ease;
+}
+.personality-item:hover{transform:translateX(4px)}
+.p-mini-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0}
+.p-mini-name{font-size:.85rem;font-weight:600;color:#3a3548}
+.p-mini-tag{font-size:.7rem;color:#8b8598;margin-left:auto}
+
+/* CTA */
+.cta-box{
+  background:linear-gradient(135deg,#f5f0fa,#fdf2e8);border-radius:20px;
+  padding:24px 28px;text-align:center;margin-bottom:28px;
+}
+.cta-box h3{font-size:1.3rem;color:#3a3548;margin-bottom:6px}
+.cta-box p{font-size:.9rem;color:#8b8598;margin-bottom:14px}
+.cta-url{
+  display:inline-block;background:#fff;padding:10px 28px;border-radius:30px;
+  font-size:1rem;font-weight:700;color:#9b7ec4;letter-spacing:.04em;
+  box-shadow:0 2px 12px rgba(155,126,196,0.15);
+}
+.cta-qr-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px}
+.cta-qr-row span{font-size:.8rem;color:#b5b0c0}
+
+/* 底部 */
+.poster-footer{
+  text-align:center;padding:20px 40px 32px;color:#b5b0c0;font-size:.8rem;
+  border-top:1px solid #f0edf5;
+}
+
+/* 打印 */
+@media print{
+  body{background:#fff;padding:0}
+  .poster{box-shadow:none;border-radius:0;width:100%}
+}
+
+/* 响应式 */
+@media(max-width:840px){
+  .poster{width:100%;border-radius:20px}
+  .poster-header{padding:32px 20px 24px}
+  .poster-title{font-size:2rem}
+  .features{grid-template-columns:1fr 1fr}
+  .personality-list{grid-template-columns:1fr 1fr}
+  .color-dot{width:40px;height:40px}
+}
+</style>
+</head>
+<body>
+
+<div class="poster" id="poster">
+
+  <!-- 顶部 -->
+  <header class="poster-header">
+    <h1 class="poster-title">发现你的内在色彩</h1>
+    <p class="poster-subtitle">Discover Your Inner Color</p>
+    <p class="poster-tagline">每个人心中都住着一种颜色，它悄悄定义了你与世界相处的方式</p>
+  </header>
+
+  <!-- 九色轮 -->
+  <div class="color-wheel">
+    <div class="color-dot" style="background:linear-gradient(135deg,#F4A460,#e89540);"><span class="tooltip">晨曦橙</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#5B7DB1,#4a6ca0);"><span class="tooltip">深海蓝</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#7D9B76,#6c8a65);"><span class="tooltip">森林绿</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#E8A0BF,#d78fae);"><span class="tooltip">樱花粉</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#A0ADC2,#8f9cb1);"><span class="tooltip">月光银</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#C75B5B,#b64a4a);"><span class="tooltip">烈焰红</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#9B7EC4,#8a6db3);"><span class="tooltip">星空紫</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#A0846E,#8f735d);"><span class="tooltip">大地棕</span></div>
+    <div class="color-dot" style="background:linear-gradient(135deg,#5EAB8A,#4d9a79);"><span class="tooltip">极光绿</span></div>
+  </div>
+
+  <!-- 主体 -->
+  <div class="poster-body">
+
+    <!-- 特点 -->
+    <h2 class="section-title">✨ 测试亮点</h2>
+    <div class="features">
+      <div class="feature-card">
+        <span class="feature-icon">🧭</span>
+        <div class="feature-title">20 道走心题目</div>
+        <div class="feature-desc">每道题像一次和内心的深度对话</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌈</span>
+        <div class="feature-title">9 种色彩人格</div>
+        <div class="feature-desc">总有一种颜色照亮你的独特</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">专属雷达图</div>
+        <div class="feature-desc">6 大维度可视化你的性格全貌</div>
+      </div>
+    </div>
+
+    <!-- 九色详情 -->
+    <h2 class="section-title">🎨 你是哪一种颜色？</h2>
+    <div class="personality-list">
+      <div class="personality-item"><div class="p-mini-dot" style="background:#F4A460"></div><span class="p-mini-name">晨曦橙</span><span class="p-mini-tag">温暖治愈者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#5B7DB1"></div><span class="p-mini-name">深海蓝</span><span class="p-mini-tag">深邃思考者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#7D9B76"></div><span class="p-mini-name">森林绿</span><span class="p-mini-tag">平和守护者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#E8A0BF"></div><span class="p-mini-name">樱花粉</span><span class="p-mini-tag">温柔浪漫者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#A0ADC2"></div><span class="p-mini-name">月光银</span><span class="p-mini-tag">沉静观察者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#C75B5B"></div><span class="p-mini-name">烈焰红</span><span class="p-mini-tag">热情行动者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#9B7EC4"></div><span class="p-mini-name">星空紫</span><span class="p-mini-tag">创意梦想家</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#A0846E"></div><span class="p-mini-name">大地棕</span><span class="p-mini-tag">可靠实干者</span></div>
+      <div class="personality-item"><div class="p-mini-dot" style="background:#5EAB8A"></div><span class="p-mini-name">极光绿</span><span class="p-mini-tag">自由探索者</span></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>🎯 现在就来测试</h3>
+      <p>手机/电脑都能测，3 分钟发现你的内在颜色</p>
+      <div class="cta-url">w5m5.github.io/personality-test</div>
+      <div class="cta-qr-row">
+        <span>📱 扫码即测 · 无需下载</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部 -->
+  <footer class="poster-footer" id="poster-footer">
+    <p>🕊 深呼吸，跟随直觉作答 · 认识自己是一生的浪漫</p>
+  </footer>
+
+</div>
+
+<!-- 下载按钮 -->
+<div style="text-align:center;padding:20px;">
+  <button id="btn-download" style="
+    padding:14px 36px;font-size:1.1rem;font-weight:700;color:#fff;
+    background:linear-gradient(135deg,#9b7ec4,#7b5ea7);border:none;
+    border-radius:50px;cursor:pointer;box-shadow:0 4px 16px rgba(155,126,196,0.3);
+    transition:all .3s ease;
+  " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    📥 下载海报图片
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+document.getElementById('btn-download').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-download');
+  btn.textContent = '⏳ 生成中...';
+  btn.disabled = true;
+  try {
+    const poster = document.getElementById('poster');
+    const canvas = await html2canvas(poster, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+    });
+    const link = document.createElement('a');
+    link.download = '色彩人格测试-宣传海报.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = '✅ 下载完成！';
+  } catch(e) {
+    btn.textContent = '⚠️ 请截图保存';
+  }
+  setTimeout(() => {
+    btn.textContent = '📥 下载海报图片';
+    btn.disabled = false;
+  }, 2000);
+});
+</script>
+
+</body>
+</html>
