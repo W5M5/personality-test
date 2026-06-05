@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人格成长手册 · 发现你的内在色彩</title>
+<style>
+:root {
+  --bg: #f9f7f4;
+  --card: #ffffff;
+  --text: #3a3548;
+  --text2: #8b8598;
+  --accent: #9b7ec4;
+  --accent-light: #ede4f7;
+  --shadow: 0 4px 24px rgba(60,40,80,0.08);
+  --radius: 20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* 封面 */
+.cover{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:40px 24px;
+  background:linear-gradient(160deg,#f5f0fa,#faf7f4,#f0f4f8);
+}
+.cover-icon{font-size:4rem;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.cover h1{font-size:2.2rem;font-weight:700;letter-spacing:.04em;margin-bottom:8px}
+.cover .sub{font-size:1.1rem;color:var(--text2);margin-bottom:4px}
+.cover .date{font-size:.85rem;color:#b5b0c0;margin-top:32px}
+
+/* 内容区 */
+.container{max-width:620px;margin:0 auto;padding:20px 20px 60px}
+.section{
+  background:var(--card);border-radius:var(--radius);padding:28px 22px;
+  box-shadow:var(--shadow);margin-bottom:20px;
+}
+.section h2{font-size:1.35rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section h3{font-size:1.1rem;margin:16px 0 8px;color:var(--text)}
+.section p{color:var(--text2);margin-bottom:10px}
+.section ul,.section ol{padding-left:20px;color:var(--text2)}
+.section li{margin-bottom:8px}
+
+/* 人格色块 */
+.personality-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:420px){.personality-grid{grid-template-columns:1fr}}
+.personality-chip{
+  border-radius:14px;padding:14px;color:#fff;font-weight:600;
+  font-size:.9rem;line-height:1.5;
+}
+.personality-chip .p-name{font-size:1rem;margin-bottom:4px;display:block}
+.personality-chip .p-tip{font-size:.75rem;opacity:.85;font-weight:400}
+
+/* 金句 */
+.quote{
+  background:linear-gradient(135deg,#fdf8f3,#f8f4fd);border-radius:var(--radius);
+  padding:24px;text-align:center;font-style:italic;margin:20px 0;
+  font-size:1.05rem;color:#7b6e90;border-left:4px solid var(--accent);
+}
+
+/* 打印 */
+@media print{
+  body{background:#fff}
+  .cover{min-height:auto;padding:40px 24px;background:#fff}
+  .section{box-shadow:none;border:1px solid #eee;break-inside:avoid}
+}
+
+.footer{text-align:center;padding:30px 20px;color:var(--text2);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<!-- 封面 -->
+<header class="cover">
+  <div class="cover-icon">📖</div>
+  <h1>人格成长手册</h1>
+  <p class="sub">认识自己，是终身浪漫的开始</p>
+  <p class="sub">—— 给每一种色彩的你</p>
+  <p class="date">色彩人格测试 · 专属成长指南</p>
+</header>
+
+<main class="container">
+
+  <!-- 前言 -->
+  <div class="section">
+    <h2>🕊 写在前面</h2>
+    <p>你好，很高兴你拿到了这份成长手册。</p>
+    <p>无论你测出来是晨曦橙、深海蓝，还是星空紫、极光绿——没有哪一种颜色比另一种更好。每一种色彩都有它独特的光芒，也有它需要被温柔对待的阴影面。</p>
+    <p>这份手册不是要"修正"你，而是帮助你更清晰地看见自己——看见那些你已经很厉害的地方，也看见那些悄悄消耗你的模式。然后，带着这些觉察，活得更自洽一点、更松弛一点。</p>
+  </div>
+
+  <!-- 九型速览 -->
+  <div class="section">
+    <h2>🌈 九种色彩 · 成长要诀</h2>
+    <p>找到你的颜色，看看专属成长建议——</p>
+
+    <div class="personality-grid">
+      <div class="personality-chip" style="background:#F4A460;">
+        <span class="p-name">☀️ 晨曦橙</span>
+        <span class="p-tip">先温暖自己，再温暖世界。练习说"不"，设立温柔的边界。</span>
+      </div>
+      <div class="personality-chip" style="background:#5B7DB1;">
+        <span class="p-name">🌊 深海蓝</span>
+        <span class="p-tip">完成比完美重要。试着在想到第3步时就行动，不必想到第10步。</span>
+      </div>
+      <div class="personality-chip" style="background:#7D9B76;">
+        <span class="p-name">🌿 森林绿</span>
+        <span class="p-tip">偶尔走出舒适区。每月尝试一件让你有点不安的小事。</span>
+      </div>
+      <div class="personality-chip" style="background:#E8A0BF;">
+        <span class="p-name">🌸 樱花粉</span>
+        <span class="p-tip">别人的情绪不是你负责的。练习区分"共情"和"过度承担"。</span>
+      </div>
+      <div class="personality-chip" style="background:#A0ADC2;">
+        <span class="p-name">🌙 月光银</span>
+        <span class="p-tip">偶尔卸下冷静的铠甲。让你信任的人看看铠甲下面温暖的你。</span>
+      </div>
+      <div class="personality-chip" style="background:#C75B5B;">
+        <span class="p-name">🔥 烈焰红</span>
+        <span class="p-tip">冲之前深呼吸三秒。不是所有战场都需要你去征服。</span>
+      </div>
+      <div class="personality-chip" style="background:#9B7EC4;">
+        <span class="p-name">✨ 星空紫</span>
+        <span class="p-tip">找到一个能把灵感落地的系统。深度和广度可以兼得。</span>
+      </div>
+      <div class="personality-chip" style="background:#A0846E;">
+        <span class="p-name">🏔️ 大地棕</span>
+        <span class="p-tip">学会给自己肯定。你做的已经比你以为的要多得多。</span>
+      </div>
+      <div class="personality-chip" style="background:#5EAB8A;">
+        <span class="p-name">🌌 极光绿</span>
+        <span class="p-tip">找到让你愿意扎根的那件事。自由和深度并不冲突。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用成长法则 -->
+  <div class="section">
+    <h2>🧠 通用成长法则</h2>
+    <p>无论你属于哪种人格，这些方法对你的成长都有帮助：</p>
+
+    <h3>1. 每日 3 分钟日记</h3>
+    <p>每天睡前写下三句话：一件今天让你开心的事、一个你学到的感悟、一个明天的小目标。不需要写很长，关键在于坚持。一个月后回头看，你会惊讶自己的变化。</p>
+
+    <h3>2. 情绪命名法</h3>
+    <p>当你感到不舒服但说不上来为什么时，尝试给情绪起个名字——不是笼统的"心情不好"，而是更精确的："我现在感到被忽视带来的失望"、"我现在感到不确定性带来的焦虑"。命名情绪本身就能降低情绪强度。</p>
+
+    <h3>3. 每周一次"不做计划"的时光</h3>
+    <p>选半天，不开会、不安排、不回消息。想做什么就做什么——散步、看云、发呆、翻一本旧书。这看起来像是"浪费时间"，但这恰恰是你的大脑在充电和整理信息。</p>
+
+    <h3>4. 找到你的"能量清单"</h3>
+    <p>列两张清单：一张是"让我充电的事"（比如一个人听歌、和朋友深聊、整理房间），一张是"让我耗电的事"（比如无意义的社交、刷手机刷到停不下来、被催促）。然后，有意识地增加前者的时间，减少后者的暴露。</p>
+  </div>
+
+  <!-- 人际关系 -->
+  <div class="section">
+    <h2>💞 人际关系优化指南</h2>
+
+    <h3>和不同性格的人相处</h3>
+    <p>外向的人从社交中获取能量，内向的人从独处中获取能量——这不是喜不喜欢你的问题，而是他们的"充电方式"。如果对方在聚会后需要独处，不是不想理你，只是在恢复能量。</p>
+
+    <h3>非暴力沟通四步法</h3>
+    <ol>
+      <li><strong>观察</strong>：描述事实，不加评判。❌"你总是迟到" ✅"我们约了三次，你有两次在约定时间30分钟后到"</li>
+      <li><strong>感受</strong>：说出你的真实情绪。"我感到着急和一点失落"</li>
+      <li><strong>需要</strong>：说出背后的需求。"因为我希望我们的时间是互相尊重的"</li>
+      <li><strong>请求</strong>：提出具体的行动请求。"下次如果会晚到，可以提前给我发个消息吗？"</li>
+    </ol>
+
+    <h3>停止讨好型沟通</h3>
+    <p>如果你发现自己总是在回复消息前反复斟酌措辞、怕说错话让对方不高兴、不敢表达不同意见——你可能有讨好型沟通倾向。试试这个练习：下次有人问你"你觉得呢？"，先说出你真实的想法，再说"但我也有可能没考虑周全"。给自己表达的权利，同时留一个台阶。</p>
+  </div>
+
+  <!-- 30天挑战 -->
+  <div class="section">
+    <h2>📅 30 天自我觉察挑战</h2>
+    <p>每天做一件小事，30 天后你会看到一个更清晰的自己：</p>
+    <ol>
+      <li><strong>Day 1-7</strong>：每天写下 1 个让你感到骄傲的瞬间（哪怕很小）</li>
+      <li><strong>Day 8-14</strong>：每天对一个人真诚地说"谢谢你"（可以是熟人，也可以是外卖小哥）</li>
+      <li><strong>Day 15-21</strong>：每天给自己留 30 分钟完全不受打扰的时间</li>
+      <li><strong>Day 22-28</strong>：每天尝试一件打破常规的小事（换个路线回家、吃一道没吃过的菜）</li>
+      <li><strong>Day 29-30</strong>：写下这 30 天的变化和你对自己新的认识</li>
+    </ol>
+  </div>
+
+  <!-- 金句 -->
+  <div class="quote">
+    "认识自己不是找到答案，而是学会和问题相处。<br>你不需要变成别人，你只需要成为更完整的自己。"
+  </div>
+
+</main>
+
+<footer class="footer">
+  <p>🎨 色彩人格测试 · 专属成长手册</p>
+  <p>测测你的内在颜色：w5m5.github.io/personality-test</p>
+  <p style="margin-top:8px;opacity:.6;">分享给一个你在乎的人，一起成长 🌱</p>
+</footer>
+
+</body>
+</html>
