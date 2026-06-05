@@ -1,0 +1,3069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>色彩人格测试 · 发现你的内在颜色</title>
+
+<!-- ============================================================
+  🎨 色彩人格测试 — 完整独立网页
+  打开即用，纯前端，适配手机/电脑
+  修改指南：搜索 "🔧" 即可找到所有可自定义的配置项
+============================================================ -->
+
+<style>
+/* ===========================
+   🔧 CSS 变量 — 一键修改配色
+   =========================== */
+:root {
+  --bg: #f9f7f4;
+  --bg-card: #ffffff;
+  --text-primary: #3a3548;
+  --text-secondary: #8b8598;
+  --text-muted: #b5b0c0;
+  --accent: #9b7ec4;
+  --accent-light: #ede4f7;
+  --accent-dark: #7b5ea7;
+  --success: #7d9b76;
+  --warning: #f4a460;
+  --shadow-sm: 0 2px 12px rgba(60, 40, 80, 0.05);
+  --shadow-md: 0 4px 24px rgba(60, 40, 80, 0.08);
+  --shadow-lg: 0 8px 40px rgba(60, 40, 80, 0.12);
+  --shadow-btn: 0 4px 16px rgba(155, 126, 196, 0.3);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.5rem;
+  --font-2xl: 2rem;
+  --font-3xl: 2.5rem;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --max-width: 560px;
+}
+
+/* ===========================
+   全局基础样式
+   =========================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+               "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===========================
+   背景浮动光斑动画
+   =========================== */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  z-index: -1;
+  pointer-events: none;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.bg-orb--1 {
+  width: 360px;
+  height: 360px;
+  background: #e8c8d8;
+  top: -80px;
+  left: -100px;
+  animation: float1 18s infinite;
+}
+
+.bg-orb--2 {
+  width: 280px;
+  height: 280px;
+  background: #c8d8e8;
+  bottom: -60px;
+  right: -80px;
+  animation: float2 22s infinite;
+}
+
+.bg-orb--3 {
+  width: 300px;
+  height: 300px;
+  background: #d4d0c8;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: float3 20s infinite;
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(60px, 40px) rotate(3deg) scale(1.08); }
+  50% { transform: translate(30px, -20px) rotate(-2deg) scale(0.95); }
+  75% { transform: translate(-20px, -30px) rotate(1deg) scale(1.04); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(-40px, -30px) rotate(-3deg) scale(1.06); }
+  66% { transform: translate(20px, 20px) rotate(2deg) scale(0.96); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  50% { transform: translate(-50%, -50%) rotate(5deg) scale(1.1); }
+}
+
+/* ===========================
+   主容器
+   =========================== */
+.app-container {
+  width: 100%;
+  max-width: var(--max-width);
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===========================
+   页面切换动画
+   =========================== */
+.page {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  animation: pageIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page.active {
+  display: flex;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================
+   卡片通用样式
+   =========================== */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+/* ===========================
+   欢迎页样式
+   =========================== */
+.welcome-header {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+
+.welcome-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: gentleBounce 2s ease-in-out infinite;
+}
+
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.welcome-title {
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.welcome-subtitle {
+  font-size: var(--font-lg);
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.welcome-highlights {
+  display: flex;
+  gap: 12px;
+  margin: 28px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.highlight-item {
+  flex: 1 1 100px;
+  min-width: 100px;
+  max-width: 150px;
+  text-align: center;
+  padding: 16px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.highlight-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.highlight-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.highlight-text {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.btn-start {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 20px auto 0;
+  padding: 16px 32px;
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: var(--transition);
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-start::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(155, 126, 196, 0.4);
+}
+
+.btn-start:hover::after {
+  opacity: 1;
+}
+
+.btn-start:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.welcome-footer {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+}
+
+/* 欢迎页分享区 */
+.welcome-share {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #ece9f0;
+}
+
+[data-theme="dark"] .welcome-share {
+  border-top-color: #353050;
+}
+
+.welcome-share-title {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.welcome-qr-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.welcome-qr-wrap img {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  background: #fff;
+  padding: 6px;
+}
+
+.welcome-share-hint {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+}
+
+/* 入场动画延迟 */
+.anim-1 { animation: fadeInUp 0.6s 0.1s both; }
+.anim-2 { animation: fadeInUp 0.6s 0.25s both; }
+.anim-3 { animation: fadeInUp 0.6s 0.4s both; }
+.anim-4 { animation: fadeInUp 0.6s 0.55s both; }
+.anim-5 { animation: fadeInUp 0.6s 0.7s both; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================
+   答题页样式
+   =========================== */
+.quiz-progress-wrap {
+  margin-bottom: 20px;
+}
+
+.quiz-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.quiz-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e8e5ec;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-light), var(--accent));
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quiz-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  min-height: 320px;
+}
+
+.quiz-question-number {
+  font-size: var(--font-sm);
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.quiz-question-text {
+  font-size: var(--font-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  line-height: 1.45;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.quiz-option:hover {
+  background: #f0edf5;
+  border-color: #e0d8eb;
+  transform: translateX(4px);
+}
+
+.quiz-option:active {
+  transform: scale(0.98);
+}
+
+.quiz-option.selected {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  font-weight: 500;
+  box-shadow: 0 2px 12px rgba(155, 126, 196, 0.15);
+}
+
+.quiz-option-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.quiz-option:hover .quiz-option-icon {
+  transform: scale(1.15);
+}
+
+.quiz-option-radio {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #d0ccd6;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.quiz-option.selected .quiz-option-radio {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.quiz-option.selected .quiz-option-radio::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.quiz-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-nav {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: var(--font-base);
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+}
+
+.btn-prev {
+  background: var(--bg);
+  color: var(--text-secondary);
+}
+
+.btn-prev:hover {
+  background: #e8e5ec;
+}
+
+.btn-prev:active {
+  transform: scale(0.97);
+}
+
+.btn-next {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-next:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(155, 126, 196, 0.35);
+}
+
+.btn-next:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-next:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 切题动画 */
+.quiz-card.slide-out-left {
+  animation: slideOutLeft 0.25s ease-in forwards;
+}
+
+.quiz-card.slide-out-right {
+  animation: slideOutRight 0.25s ease-in forwards;
+}
+
+.quiz-card.slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.quiz-card.slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-40px); }
+}
+
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(40px); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ===========================
+   结果页样式
+   =========================== */
+.result-hero {
+  text-align: center;
+  padding: 24px 0 8px;
+}
+
+.result-color-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  animation: resultPopIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes resultPopIn {
+  from { opacity: 0; transform: scale(0.3); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.result-personality-name {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.result-tagline {
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.result-tag {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.result-card {
+  margin-bottom: 16px;
+}
+
+.result-card h3 {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-card p {
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.result-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.result-card ul li {
+  padding: 6px 0;
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.result-card ul li::before {
+  content: '•';
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+  padding-bottom: 24px;
+}
+
+.btn-action {
+  flex: 1 1 auto;
+  min-width: 100px;
+  padding: 12px 16px;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-action:active {
+  transform: scale(0.96);
+}
+
+.btn-retry {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.btn-retry:hover {
+  background: #e8e5ec;
+}
+
+.btn-copy {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.btn-copy:hover {
+  background: #dcd0eb;
+}
+
+.btn-screenshot {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-screenshot:hover {
+  background: var(--accent-dark);
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  z-index: 999;
+  animation: toastIn 0.35s ease-out, toastOut 0.3s 1.5s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ===========================
+   结果揭晓动画遮罩
+   =========================== */
+.reveal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.8s ease;
+}
+
+.reveal-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reveal-orb {
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reveal-orb.expand {
+  width: 140px;
+  height: 140px;
+}
+
+.reveal-orb.pulse {
+  animation: orbPulse 0.8s ease-in-out 0.6s;
+}
+
+@keyframes orbPulse {
+  0% { box-shadow: 0 0 0 0 rgba(155, 126, 196, 0.4); }
+  100% { box-shadow: 0 0 0 60px rgba(155, 126, 196, 0); }
+}
+
+.reveal-orb.burst {
+  width: 200vmax;
+  height: 200vmax;
+  transition: width 0.7s ease-in, height 0.7s ease-in;
+}
+
+.reveal-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  position: absolute;
+  letter-spacing: 0.08em;
+}
+
+.reveal-name.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===========================
+   雷达图 Canvas
+   =========================== */
+.radar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radar-card canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ===========================
+   呼吸引导动画
+   =========================== */
+.breathe-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.breathe-ring {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: breathe 2.5s ease-in-out forwards;
+}
+
+@keyframes breathe {
+  0%   { transform: scale(0.6); opacity: 0.4; box-shadow: 0 0 0 0 rgba(155,126,196,0.2); }
+  50%  { transform: scale(1.6); opacity: 1;   box-shadow: 0 0 0 30px rgba(155,126,196,0); }
+  100% { transform: scale(0.8); opacity: 0;   box-shadow: 0 0 0 0 rgba(155,126,196,0); }
+}
+
+.breathe-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  animation: fadeInOut 2.5s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateY(8px); }
+  30%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===========================
+   粒子画布
+   =========================== */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===========================
+   分享名片（隐藏元素，截图用）
+   =========================== */
+.stats-card {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg));
+}
+
+.stats-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 12px 0;
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1 1 80px;
+  min-width: 80px;
+}
+
+.stat-number {
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: block;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+  line-height: 1.4;
+}
+
+.stats-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.barnum-card {
+  background: linear-gradient(135deg, #fdf8f3, #f8f4fd);
+}
+
+[data-theme="dark"] .barnum-card {
+  background: linear-gradient(135deg, #2a2540, #252240);
+}
+
+.barnum-item {
+  font-style: italic;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  line-height: 1.7;
+  border-left: 3px solid var(--accent-light);
+  padding-left: 16px;
+  margin: 8px 0;
+}
+.share-card {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 600px;
+  min-height: 800px;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  border-radius: 28px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.share-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), transparent 60%),
+              radial-gradient(circle at 70% 80%, rgba(0,0,0,0.1), transparent 60%);
+}
+
+.share-card-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.share-card-icon {
+  font-size: 3.5rem;
+  margin-bottom: 4px;
+}
+
+.share-card-name {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.share-card-tagline {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 400;
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.share-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.share-card-tag {
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(4px);
+}
+
+.share-card-divider {
+  width: 60px;
+  height: 2px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 1px;
+  margin: 4px 0;
+}
+
+.share-card-quote {
+  font-size: 1rem;
+  line-height: 1.8;
+  opacity: 0.85;
+  max-width: 400px;
+}
+
+.share-card-footer {
+  margin-top: auto;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  letter-spacing: 0.04em;
+}
+
+.share-card-watermark {
+  font-size: 0.7rem;
+  opacity: 0.4;
+  margin-top: 4px;
+}
+
+/* ===========================
+   音效开关按钮
+   =========================== */
+.sound-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid #e8e5ec;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.sound-toggle:hover {
+  box-shadow: var(--shadow-md);
+  transform: scale(1.06);
+}
+
+.sound-toggle:active {
+  transform: scale(0.94);
+}
+
+/* 音乐开关 */
+.music-toggle {
+  position: fixed;
+  bottom: 76px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid #e8e5ec;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.music-toggle:hover {
+  box-shadow: var(--shadow-md);
+  transform: scale(1.06);
+}
+
+.music-toggle:active {
+  transform: scale(0.94);
+}
+
+.music-toggle.playing {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  animation: musicPulse 2s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(155, 126, 196, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(155, 126, 196, 0); }
+}
+
+/* ===========================
+   响应式适配
+   =========================== */
+@media (max-width: 480px) {
+  :root {
+    --font-3xl: 1.9rem;
+    --font-2xl: 1.5rem;
+    --font-xl: 1.25rem;
+    --font-lg: 1rem;
+  }
+
+  .app-container {
+    padding: 16px 14px 32px;
+  }
+
+  .card, .quiz-card, .result-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .welcome-header {
+    padding: 28px 0 12px;
+  }
+
+  .welcome-icon {
+    font-size: 2.6rem;
+  }
+
+  .highlight-item {
+    min-width: 70px;
+    padding: 12px 8px;
+  }
+
+  .highlight-icon {
+    font-size: 1.4rem;
+  }
+
+  .btn-start {
+    max-width: 100%;
+    padding: 14px 24px;
+    font-size: var(--font-base);
+  }
+
+  .quiz-option {
+    padding: 12px 14px;
+    font-size: var(--font-sm);
+  }
+
+  .quiz-question-text {
+    font-size: var(--font-lg);
+  }
+
+  .result-color-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .result-actions {
+    gap: 8px;
+  }
+
+  .btn-action {
+    padding: 10px 12px;
+    font-size: var(--font-xs);
+  }
+
+  .sound-toggle {
+    bottom: 16px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .music-toggle {
+    bottom: 62px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .theme-toggle {
+    bottom: 108px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    padding: 40px 20px 48px;
+  }
+
+  .quiz-card {
+    padding: 36px 32px;
+  }
+
+  .result-card {
+    padding: 28px;
+  }
+}
+
+/* ===========================
+   🌙 暗色模式
+   =========================== */
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --bg-card: #242438;
+  --text-primary: #e4e0ec;
+  --text-secondary: #a09ab0;
+  --text-muted: #6e6880;
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+  --shadow-btn: 0 4px 16px rgba(155, 126, 196, 0.25);
+}
+
+[data-theme="dark"] .quiz-option {
+  background: #2a2a40;
+  border-color: transparent;
+}
+
+[data-theme="dark"] .quiz-option:hover {
+  background: #32324d;
+  border-color: #4a4470;
+}
+
+[data-theme="dark"] .quiz-option.selected {
+  background: #3a3050;
+  border-color: var(--accent);
+}
+
+[data-theme="dark"] .highlight-item {
+  background: #242438;
+}
+
+[data-theme="dark"] .quiz-progress-bar {
+  background: #2e2e46;
+}
+
+[data-theme="dark"] .btn-prev {
+  background: #2a2a40;
+  color: #a09ab0;
+}
+
+[data-theme="dark"] .btn-prev:hover {
+  background: #32324d;
+}
+
+[data-theme="dark"] .bg-orb {
+  opacity: 0.06;
+}
+
+[data-theme="dark"] .reveal-overlay {
+  background: #1a1a2e;
+}
+
+/* 暗色模式切换按钮 */
+.theme-toggle {
+  position: fixed;
+  bottom: 128px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid #e8e5ec;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  box-shadow: var(--shadow-md);
+  transform: scale(1.06);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 背景浮动光斑 -->
+<div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+<div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+<div class="bg-orb bg-orb--3" aria-hidden="true"></div>
+
+<!-- ===========================
+  音效开关
+  =========================== -->
+<button class="sound-toggle" id="btn-sound" title="音效开关" aria-label="音效开关">
+  🔊
+</button>
+<button class="music-toggle" id="btn-music" title="背景音乐" aria-label="背景音乐开关">
+  🎵
+</button>
+<button class="theme-toggle" id="btn-theme" title="暗色模式" aria-label="切换暗色模式">
+  🌙
+</button>
+
+<!-- ===========================
+  呼吸引导遮罩
+  =========================== -->
+<div class="breathe-overlay" id="breathe-overlay" style="display:none;">
+  <div class="breathe-ring" id="breathe-ring"></div>
+  <p class="breathe-text">深呼吸，跟随直觉...</p>
+</div>
+
+<!-- ===========================
+  粒子 Canvas
+  =========================== -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<!-- ===========================
+  结果揭晓动画遮罩
+  =========================== -->
+<div class="reveal-overlay" id="reveal-overlay" style="display:none;">
+  <div class="reveal-orb" id="reveal-orb"></div>
+  <div class="reveal-name" id="reveal-name"></div>
+</div>
+
+<!-- ===========================
+  分享名片（隐藏，截图时使用）
+  =========================== -->
+<div class="share-card" id="share-card"></div>
+
+<!-- ===========================
+  主容器
+  =========================== -->
+<main class="app-container" id="app">
+
+  <!-- ========== 欢迎页 ========== -->
+  <section class="page active" id="page-welcome" aria-labelledby="welcome-title">
+    <header class="welcome-header">
+      <div class="welcome-icon anim-1" aria-hidden="true">🎨</div>
+      <!-- 🔧 修改标题和副标题 -->
+      <h1 class="welcome-title anim-2" id="welcome-title">发现你的<br>内在色彩</h1>
+      <p class="welcome-subtitle anim-3">每个人心中都住着一种颜色，<br>它悄悄定义了你与世界相处的方式。</p>
+    </header>
+
+    <div class="welcome-highlights anim-4">
+      <!-- 🔧 修改测试亮点 -->
+      <div class="highlight-item">
+        <span class="highlight-icon">🧭</span>
+        <span class="highlight-text">20 道走心题目</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-icon">🌈</span>
+        <span class="highlight-text">9 种色彩人格</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-icon">💌</span>
+        <span class="highlight-text">专属解读文案</span>
+      </div>
+    </div>
+
+    <button class="btn-start anim-5" id="btn-start" type="button">
+      开始测试 ✦
+    </button>
+
+    <footer class="welcome-footer">
+      <p>🕊 深呼吸，跟随直觉作答就好</p>
+      <div class="welcome-share">
+        <p class="welcome-share-title">📱 扫码分享给朋友</p>
+        <div class="welcome-qr-wrap">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAJYCAYAAAC+ZpjcAAAAAklEQVR4AewaftIAABARSURBVHhe7dDBDQAwDMCg/uef5oMF3RFVNpNM/wCAMxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFMbAABObQAAOLUBAODUBgCAUxsAAE5tAAA4tQEA4NQGAIBTGwAATm0AADi1AQDg1AYAgFPTPwIAAGc2AACc2gAAcGoDAMCpDQAApzYAAJzaAABwagMAwKkNAACnNgAAnNoAAHBqAwDAqQ0AAKc2AACc2gAAcGoDAMCpDQAApzYAAJzaAABwagMAwKkNAACnNgAAnNoAAHBqAwDAqQ0AAKc2AACc2gAAcGoDAMCpDQAApzYAAJzaAABwagMAwKkNAACnNgAAnNoAAHBqAwDAqQ0AAKc2AACc2gAAcGoDAMCpDQAApzYAAJzaAABwagMAwKkNAACnNgAAnNoAAHBqAwDAqQ0AAKc2AACc2gAAcGoDAMCpDQAApzYAAJzaAABwagMAwKkNAACnNgAAnNoAAHBqAwDAqQ0AAKf+B8GEbuTYtH7KAAAAAElFTkSuQmCC" alt="扫码测试" width="120" height="120" loading="lazy">
+        </div>
+        <p class="welcome-share-hint">测完记得转发，看看谁和你同色 🌈</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ========== 答题页 ========== -->
+  <section class="page" id="page-quiz">
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-info">
+        <span id="quiz-progress-label">第 1 / 20 题</span>
+        <span id="quiz-progress-pct">5%</span>
+      </div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 5%"></div>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-question-number" id="quiz-q-num">Q1</div>
+      <h2 class="quiz-question-text" id="quiz-q-text"></h2>
+      <div class="quiz-options" id="quiz-options"></div>
+    </div>
+
+    <nav class="quiz-nav">
+      <button class="btn-nav btn-prev" id="btn-prev" type="button" style="visibility: hidden;">
+        ← 上一题
+      </button>
+      <button class="btn-nav btn-next" id="btn-next" type="button" disabled>
+        下一题 →
+      </button>
+    </nav>
+  </section>
+
+  <!-- ========== 结果页 ========== -->
+  <section class="page" id="page-result">
+    <div id="result-content"></div>
+  </section>
+
+</main>
+
+<!-- ===========================
+  html2canvas CDN（截图用）
+  =========================== -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+</script>
+
+<script>
+/* ============================================================
+   🔧 自定义配置区 — 修改这里即可定制整个测试
+   ============================================================ */
+
+// 测试基本信息
+const TEST_CONFIG = {
+  title: '发现你的内在色彩',
+  subtitle: '每个人心中都住着一种颜色，它悄悄定义了你与世界相处的方式。',
+  totalQuestions: 20,
+  personalityCount: 9,
+};
+
+// 音效：默认关闭
+let soundEnabled = false;
+
+/* ============================================================
+   🔧 9 种色彩人格定义
+   每个：id, name(名称), color(色值), tagline(一句话),
+         traits(核心特质标签), colorLight(浅色用于背景),
+         strengths, weaknesses, analysis, scenarios, advice
+   ============================================================ */
+const PERSONALITIES = [
+  {
+    id: 0,
+    name: '晨曦橙',
+    color: '#F4A460',
+    colorLight: '#FDF2E8',
+    tagline: '温暖治愈者，像清晨第一缕阳光',
+    traits: ['温暖', '乐观', '感染力', '治愈'],
+    strengths: '你天生拥有温暖他人的能力，像清晨第一缕阳光照进房间，不刺眼，却足以驱散阴霾。你擅长倾听，朋友们总愿意把心事说给你听，因为你的回应不带评判，只有接纳。你的乐观不是盲目的，而是经历过事情之后依然选择相信美好。在团队中，你是那股让人安心的柔和力量，能把紧张的气氛化成笑声。',
+    weaknesses: '你有时太在意别人的感受，习惯把自己的需求往后放。你可能不忍心拒绝，哪怕已经分身乏术。偶尔，你的温暖会被误解为「没脾气」，但你自己知道，那不是软弱，只是选择了温柔。你需要学会适当为自己设立边界——爱别人之前，先照顾好自己的心。',
+    analysis: '你的性格底色是温暖的橙色——这是日出时分天空的颜色，充满希望却不过分热烈。心理学上，你的特质接近「宜人性」与「积极情绪」的双高组合。你善于共情，也擅长在混乱中找到那个让人心安的支点。你不需要成为舞台中央最耀眼的人，但你是那个让整个舞台运转得温暖有序的存在。对你来说，真正的力量不是压倒别人，而是让身边的人因为你而变得更好一点。',
+    scenarios: '你特别适合需要与人深度连接的工作场景：教育、心理咨询、社区运营、用户研究、医疗护理。在人际关系中，你是那个朋友们半夜愿意打电话倾诉的人。你也适合成为团队中的「润滑剂」——不是最显眼的，但缺了你氛围就完全不同。',
+    advice: '1. 学会对自己说「不」和对外界说「我要」同样重要；\n2. 找到能给你充电的人和环境，而不是一直在放电；\n3. 你的温柔是天赋，不是弱点，永远不要为它道歉；\n4. 偶尔把自己放在第一位，这不是自私，是自爱。'
+  },
+  {
+    id: 1,
+    name: '深海蓝',
+    color: '#5B7DB1',
+    colorLight: '#EDF2F8',
+    tagline: '深邃思考者，沉静如深海',
+    traits: ['理性', '深度', '沉静', '智慧'],
+    strengths: '你的思维像深海一样广阔而沉稳。你习惯在行动之前先观察、分析、理解全貌。你不会急于表达，但一旦开口，往往一语中的，让人惊叹你的洞察力。你擅长在复杂的信息中找到规律和逻辑，那些别人觉得杂乱无章的细节，在你眼里自有秩序。你的平静是一种力量——在别人慌乱时，你是那个保持冷静、让人信赖的锚点。',
+    weaknesses: '你有时会过度思考，陷入「分析瘫痪」——想了太多，反而迟迟不敢行动。你的沉静可能被误解为冷漠或疏离，身边的人偶尔会觉得走不进你的内心。你倾向于独自消化情绪，不太习惯向外界求助，但这不意味着你不需要支持。尝试偶尔放下理性，允许自己「不完美地开始」。',
+    analysis: '你的性格底色是深邃的蓝色——这是深海的颜色，表面看似平静，内里却蕴含着巨大的深度和力量。心理学上，你的特质接近「开放性」与「内省」的结合。你拥有强大的内在世界，善于从表象之下找到深层逻辑。你不是那种会用言语表达一切的人，但你的每一个决定都是深思熟虑后的产物。你的存在提醒世界：不需要喧哗，深度自有其力量。',
+    scenarios: '你适合需要深度思考和独立判断的工作：研究、数据分析、编程、写作、战略规划、学术研究。在团队中，你是那个能看清全局、提出关键问题的人。你的生活方式倾向于安静而有质感——比起喧闹的派对，你更喜欢深度的对话或独自沉浸在热爱的事情中。',
+    advice: '1. 深度思考是天赋，但「完成比完美更重要」值得记住；\n2. 主动分享你的想法，你的视角对别人很有价值；\n3. 找一个能深度交流的小圈子，而不是试图融入所有场合；\n4. 偶尔允许自己「想少一点，感受多一点」。'
+  },
+  {
+    id: 2,
+    name: '森林绿',
+    color: '#7D9B76',
+    colorLight: '#F0F5EE',
+    tagline: '平和守护者，如森林般包容',
+    traits: ['包容', '稳定', '耐心', '可靠'],
+    strengths: '你像一片安静的森林——不张扬，却让人感到踏实的依靠。你有一种罕见的稳定感，在生活中像一棵深深扎根的树，风吹过时微微摇摆，但从不倒下。你接纳自己的不完美，也接纳别人的不同。和你相处最大的感受就是「不累」——你不需要别人迎合，也不轻易评价他人的选择。你是朋友圈里那个「永远在」的人。',
+    weaknesses: '你有时过于求稳，不太喜欢改变和不确定。面对新鲜事物，你的第一反应可能是犹豫而非兴奋。你倾向于把「安稳」放在「可能性」之前，偶尔会错过那些藏在风险里的机会。你的包容有时也让别人觉得你「没有立场」，但你知道自己只是觉得很多事情没必要争个对错。',
+    analysis: '你的性格底色是沉静的森林绿——这是大自然最本真的颜色，让人想起树荫、泥土和雨后青草的气息。心理学上，你的特质接近高「情绪稳定性」与高「宜人性」的结合。你能在变化中保持内核稳定，也能在冲突中成为那根定海神针。你的人生哲学可能是「慢慢来，比较快」——不急着证明什么，但每一步都走得扎实。',
+    scenarios: '你适合需要稳定输出和长期经营的工作：项目管理、教育、园艺、建筑设计、行政管理。在关系中，你是那种「十年如一日」的朋友——不会每天联系，但任何时候你需要，对方就知道你在。你适合节奏从容的生活，太喧嚣的环境会让你消耗过快。',
+    advice: '1. 偶尔走出舒适区，惊喜往往藏在你不熟悉的地方；\n2. 你的稳定是珍贵的礼物，但不必让「靠谱」成为唯一的标签；\n3. 学会说「我想要」，而不是总说「你们决定就好」；\n4. 有一些只属于自己的小冒险，哪怕只是一个人去吃没吃过的菜。'
+  },
+  {
+    id: 3,
+    name: '樱花粉',
+    color: '#E8A0BF',
+    colorLight: '#FDF4F8',
+    tagline: '温柔浪漫者，心怀美好',
+    traits: ['温柔', '浪漫', '细腻', '共情'],
+    strengths: '你的内心住着一片永不凋零的樱花。你天生对美和情感有敏锐的感知力——一首歌、一片夕阳、一句不经意的话，都能让你心生感触。你待人温柔体贴，总能注意到别人忽略的细节：朋友换了发型、同事今天看起来不太开心。你的存在本身就像一种安抚，让人不自觉地想要靠近，卸下防备。你相信浪漫不是仪式感，而是用心。',
+    weaknesses: '你有时过于在意别人的一句话、一个眼神，容易陷入自我怀疑。你的高敏感是天赋，但也是一把双刃剑——在嘈杂和不友善的环境里，你比别人更容易疲惫。你倾向于把别人的情绪背在自己身上，甚至为不是你的问题而内疚。你需要学会区分「共情」和「过度负责」之间的界限。',
+    analysis: '你的性格底色是温柔的樱花粉——这是春天最初的颜色，轻盈、柔软、充满希望。心理学上，你的特质接近高「宜人性」与高「情感敏锐度」的组合。你拥有罕见的情感颗粒度，能触摸到情绪光谱中最细微的变化。你的浪漫不是天真，而是看透了世界的不完美之后，依然选择用温柔的方式和它相处。你提醒了身边的人：柔软从不等于软弱。',
+    scenarios: '你适合需要情感洞察力与审美感知的工作：艺术创作、花艺、设计、心理咨询、内容创作、人文教育。在生活中，你善于营造温暖的小空间——你的房间、你的文字、你做的菜，都带着你的温度。你需要的生活不是最豪华的，而是最有「感觉」的。',
+    advice: '1. 敏感是天赋，但建立情绪边界同样重要——别人的情绪不是你的责任；\n2. 找到能欣赏你细腻的人，他们值得你的温柔；\n3. 允许自己偶尔「钝」一点，不必什么都感受到；\n4. 把你的感受写成文字或画出来——表达是最好的自我疗愈。'
+  },
+  {
+    id: 4,
+    name: '月光银',
+    color: '#A0ADC2',
+    colorLight: '#F4F6F9',
+    tagline: '沉静观察者，冷静而通透',
+    traits: ['冷静', '客观', '通透', '独立'],
+    strengths: '你像月光一样清冷而通透，拥有一种天然的「第三视角」能力。你能在情绪高涨的场合中保持冷静，看清事情的本质。你不容易被群体情绪裹挟，也不会被表象迷惑。你擅长抽离出来观察世界——包括观察自己。这种能力让你在复杂局面中做出比大多数人更清醒的判断。你偏爱独处但不孤僻，你只是觉得一个人的状态最自在、最真实。',
+    weaknesses: '你的冷静有时会被误解为「缺乏热情」或「不合群」。你可能不太擅长热络的社交，也不太会用语言表达关心——但这不意味着你不关心。你习惯把事情放在心里思考很多遍，但未必会和别人分享。偶尔，你可能感到一种淡淡的孤独——不是因为缺人陪伴，而是很少有人真正理解你。',
+    analysis: '你的性格底色是清冷的月光银——不像阳光那样炽热，但在黑暗中提供最清晰的视野。心理学上，你的特质接近高「独立性」与高「认知复杂度」的结合。你天然擅长「元认知」——能够观察自己的思维过程本身。你的人生节奏不急不躁，你不喜欢被催促，也不催促别人。你的通透不是冷漠，而是比别人更早看懂了「很多事情真的没那么重要」。',
+    scenarios: '你适合需要独立思考与冷静判断的工作：数据分析、策略咨询、编辑、法务、设计、独立研究。你偏爱的工作方式是「给我一个目标，信任我，别一直问进度」。在生活中，你享受小而精致的圈子，比起几十人的聚会，你更喜欢和两三个聊得来的人深谈。',
+    advice: '1. 冷静是铠甲，但偶尔也让人看看铠甲下面温暖的你；\n2. 找到属于你表达关心的小方式——不一定是说话，可以是行动；\n3. 记录你的思考和洞察，你的视角独特且珍贵；\n4. 偶尔允许自己「不冷静」——比如为一部电影大哭或大笑。'
+  },
+  {
+    id: 5,
+    name: '烈焰红',
+    color: '#C75B5B',
+    colorLight: '#FBEFEF',
+    tagline: '热情行动者，热烈而果敢',
+    traits: ['热情', '果敢', '行动力', '感染力'],
+    strengths: '你骨子里有一团不灭的火。你不是等风来的人——你自己就是风。你的行动力惊人，有了想法就想立刻去尝试，不等「完美时机」因为你知道最好的时机就是现在。你的热情能点燃身边的人，大家愿意跟着你一起冲，因为你的信心很有感染力。你不怕失败，在你的字典里，「搞砸了」只是「学到了」的另一种说法。你活得热烈、真实、不拧巴。',
+    weaknesses: '你的热情有时太急——你可能还没想清楚就冲出去了，偶尔在路上才发现方向可能需要调整。你不太有耐心处理细节，那些需要慢慢磨的事情让你焦虑。你的直言不讳有时可能误伤那些心思细腻的人，但你往往后知后觉。你偶尔会把自己燃烧得太厉害，忘了补充能量。',
+    analysis: '你的性格底色是热烈的红色——这是火焰的颜色，代表生命力、热情和行动。心理学上，你的特质接近高「外向性」与高「开放性」的组合。你的人生不是用来等待的，而是用来体验的。你信奉「行动胜于空谈」，比起计划，你更相信在行动中调整。你的存在提醒世界：活着就是要有点热血——不然和咸鱼有什么区别？',
+    scenarios: '你适合需要行动力和驱动力的工作：创业、销售、活动策划、公共演讲、运动教练、导演。在团队中，你是那个说「管它的，先做再说」的人——往往是这句话推动了一个停滞的项目。你的生活节奏偏快，你需要的工作是能让你不停有新体验的。',
+    advice: '1. 冲之前深呼吸三秒——方向比速度更重要；\n2. 找到互补型搭档来平衡你的规划与细节；\n3. 学习「认真倾听」——不是所有问题都需要马上解决；\n4. 定期检查自己的能量余额——热情是燃料，需要补充。'
+  },
+  {
+    id: 6,
+    name: '星空紫',
+    color: '#9B7EC4',
+    colorLight: '#F3EFF8',
+    tagline: '创意梦想家，灵魂自带光芒',
+    traits: ['创意', '直觉', '独特', '灵感'],
+    strengths: '你的灵魂像星空一样深邃而充满可能性，寻常的路径对你来说太窄了。你拥有蓬勃的创造力——不是那种刻意的「创新」，而是你本能地用不同的角度看待世界。你的直觉很准：有时候你说不清原因但就是「知道」。你不在意别人的眼光，敢于做自己认为对的事情。你的独特不是刻意标新立异，而是你生来就不是复制品。你总是在想「为什么不能试试这样呢？」',
+    weaknesses: '你的想法有时候飘得太高，落地时会有点磕绊。你可能容易开始新项目，但坚持到收尾需要更多的自律。你的独特偶尔会让你感到「格格不入」——特别是在那些强调统一标准的环境里。你不太喜欢规则和条条框框，但这有时候会让你和现实世界产生摩擦。你需要找到一种平衡：保持灵魂自由的同时，也在人间好好生活。',
+    analysis: '你的性格底色是神秘的星空紫——这是夜空深处的颜色，象征想象力、灵性和超越常规的创造力。心理学上，你的特质接近高「开放性」——这是和创造力最相关的性格维度。你的好奇心似乎永远用不完，你总是能看到别人看不到的连接和可能性。你的内心世界丰富得像一个独立宇宙——而你时不时从里面摘一颗星星出来，照亮别人的世界。',
+    scenarios: '你适合需要创造力和独特视角的工作：艺术创作、设计、写作、音乐、科技创新、品牌策划。在团队中，你是那个抛出意想不到方案的人。你需要的工作环境是自由度高、鼓励尝试的——等级森严、流程僵化的地方会让你窒息。你的生活需要空间和弹性，过于刻板的日程会耗尽你的能量。',
+    advice: '1. 找到一个能把你的灵感变成现实的系统或伙伴——创意和执行力同样重要；\n2. 允许自己「和别人不一样」——这本就是你最好的部分；\n3. 自律给你自由——微小的日常习惯让你更有精力去创造；\n4. 不要因为怕「平凡」而不敢深耕——深度和广度可以兼得。'
+  },
+  {
+    id: 7,
+    name: '大地棕',
+    color: '#A0846E',
+    colorLight: '#F6F3F0',
+    tagline: '可靠实干者，如山般稳重',
+    traits: ['实干', '可靠', '务实', '坚韧'],
+    strengths: '你是那种让人想起「靠山」的人——话不多，但每件事都做得踏实。你不喜欢虚的，承诺了的事情就一定会做到。你有一种让人信赖的稳重感：交给你的工作不用催促，你会在 deadline 之前默默完成。你不在意名利场上的浮光掠影，更在意「这件事有没有做好」。你的坚韧不拔让人敬佩——困难对你来说不是障碍，是需要一步步解决的事情。',
+    weaknesses: '你有时低估了自己已经做得多好——总觉得自己还可以再好一点、再努力一点。你不太会「秀」自己的成绩，这让你在需要展示自己的场合中吃亏。你的务实偶尔会让你缺乏想象力——当别人提出天马行空的方案时，你的第一反应是「这不现实」。你可能把「压力」当作常态，忘了自己也需要休息。',
+    analysis: '你的性格底色是沉稳的大地棕——这是土壤的颜色，是所有生长的基础。心理学上，你的特质接近高「尽责性」——这是预测长期成功最重要的性格特质。你不追求戏剧化的成功，你相信「种瓜得瓜」——持续的努力终将开花结果。你的存在让人感到安心：在这个变化太快的世界里，你是一种「不变」的力量。',
+    scenarios: '你适合需要可靠性和长期坚持的工作：工程、会计、项目管理、手工艺、医疗技术、农业。在团队中，你是那个被大家默认靠得住的人——不需要多说什么，你的行动就是最好的证明。你的生活方式偏规律和务实，比起一时的新鲜感，你更看重「可持续的好」。',
+    advice: '1. 学会给自己肯定——你做的已经比你以为的多得多；\n2. 偶尔允许自己大胆设想——务实和想象力可以共存；\n3. 学会把成果分享出来，让该看到的人看到它；\n4. 给自己放个假——休息不是偷懒，是续航。'
+  },
+  {
+    id: 8,
+    name: '极光绿',
+    color: '#5EAB8A',
+    colorLight: '#EEF8F3',
+    tagline: '自由探索者，永远好奇',
+    traits: ['自由', '好奇', '探索', '开放'],
+    strengths: '你的灵魂像极光一样灵动而不可预测——你永远在寻找新的风景、新的想法、新的生活方式。你的好奇心是无限的：一本书、一段旅程、一个陌生人，都可能成为你灵感的源泉。你不会被框架和标签定义——你是什么取决于你在探索什么。你的开放心态让你能和各行各业的人打成一片，你觉得每个人身上都有值得学习的地方。你的人生信条是「多走走、多看看」。',
+    weaknesses: '你有时很难定下来——无论是职业、城市还是感情。你害怕无聊和重复，这让你可能在做决定时犹豫不决，总觉得「下一个可能更好」。你可能积累了广泛的兴趣，但缺乏深度钻研的领域。你的自由感让你享受，但偶尔也会让你产生一种「无根」的感觉。你需要找到一种方式：既可以自由地奔跑，也知道哪里是你可以回去的地方。',
+    analysis: '你的性格底色是灵动的极光绿——这是自然界最奇异的光，变幻莫测、独一无二。心理学上，你的特质接近高「开放性」与高「外向性」的结合。你天生是探索者，生活的意义对你来说不在于稳定的答案，而在于持续的探索。你不追求传统意义上的成功——你更在意有没有「活够本」。你的存在提醒世界：人生不是一条直线，而是一场需要尽情体验的旅程。',
+    scenarios: '你适合需要适应力和探索精神的工作：旅行博主、记者、摄影师、自由职业、国际商务、环境研究。你无法忍受一成不变的工作——你需要的角色是每天都在接触新事物的。在生活方式上，你可能喜欢旅居、尝试不同的城市、学习各种技能。对自由的渴望是你最大的动力来源。',
+    advice: '1. 找到让你愿意深耕的那件事——自由和深度并不冲突；\n2. 建立一小段稳定的「锚」：一个人、一个地方、一个习惯；\n3. 记录你的探索——有一天回头看，你会惊讶于自己走了多远；\n4. 学会辨别「探索」和「逃避」的区别——不是所有的离开都是向前。'
+  }
+];
+
+/* ============================================================
+   🔧 维度分数 — 每个人格在 6 个维度的得分 (0-100)
+   维度：[温暖度, 理性度, 行动力, 创造力, 稳定性, 敏感度]
+   ============================================================ */
+const DIMENSION_LABELS = ['温暖度', '理性度', '行动力', '创造力', '稳定性', '敏感度'];
+const DIMENSION_SCORES = [
+  [95, 40, 55, 50, 60, 85], // 0 晨曦橙
+  [30, 95, 35, 55, 70, 45], // 1 深海蓝
+  [65, 60, 40, 40, 90, 55], // 2 森林绿
+  [90, 35, 30, 65, 45, 95], // 3 樱花粉
+  [25, 90, 30, 45, 75, 50], // 4 月光银
+  [55, 45, 95, 60, 30, 40], // 5 烈焰红
+  [45, 55, 50, 95, 35, 70], // 6 星空紫
+  [70, 65, 60, 25, 95, 30], // 7 大地棕
+  [60, 40, 70, 75, 35, 55], // 8 极光绿
+];
+
+/* ============================================================
+   🔧 20 道题目
+   每题：id, question(题目文字),
+         options: [{ text(选项文字), scores(对9种人格的权重数组) }]
+   scores 数组对应 PERSONALITIES[0]~[8]
+   ============================================================ */
+const QUESTIONS = [
+  {
+    id: 1,
+    question: '☀️ 周末早上醒来，没有任何安排，你脑海里第一个念头是？',
+    options: [
+      { text: '给朋友们发消息约个 brunch～', scores: [3,0,1,2,0,4,1,0,2] },
+      { text: '窝在床上看书或刷剧，享受独处时光', scores: [1,4,1,1,3,0,2,0,0] },
+      { text: '出门散步或去公园，感受大自然', scores: [2,1,3,1,1,0,0,1,3] },
+      { text: '突然想去一个没去过的地方逛逛', scores: [1,0,0,1,0,2,4,0,5] }
+    ]
+  },
+  {
+    id: 2,
+    question: '💬 好朋友深夜发来一大段语音，向你倾诉最近的困扰，你通常会？',
+    options: [
+      { text: '认真倾听，先给一个温暖的抱抱', scores: [5,0,1,4,1,1,0,1,0] },
+      { text: '帮她分析问题的来龙去脉，给出建议', scores: [0,5,0,0,3,0,1,2,0] },
+      { text: '陪她出去走走散散心，转移注意力', scores: [2,0,3,1,0,3,0,0,4] },
+      { text: '分享你自己类似的经历，让她知道她不孤单', scores: [3,0,2,3,0,2,2,0,1] }
+    ]
+  },
+  {
+    id: 3,
+    question: '🤔 站在人生岔路口，一个重要决定摆在面前，你更倾向于？',
+    options: [
+      { text: '听从内心的直觉和感受', scores: [2,0,1,4,0,2,4,0,1] },
+      { text: '列出利弊清单，理性分析', scores: [0,5,0,0,4,0,0,3,0] },
+      { text: '咨询身边信任的人，综合意见', scores: [3,1,3,2,1,0,1,1,1] },
+      { text: '先小步试试看，边做边调整', scores: [1,1,1,0,0,4,1,2,3] }
+    ]
+  },
+  {
+    id: 4,
+    question: '🫂 一场热闹的聚会结束后，回到家关上门那一刻，你内心最真实的感受是？',
+    options: [
+      { text: '好开心！已经在期待下一次聚会了，人越多越有能量', scores: [4,0,1,2,0,5,2,0,3] },
+      { text: '温暖但有点累——还是和一两知己的深度聊天更适合我', scores: [1,3,2,3,4,0,2,1,0] },
+      { text: '挺享受的，不过现在我需要一点安静的时间恢复能量', scores: [2,2,3,1,2,1,1,0,2] },
+      { text: '终于可以一个人待着了，独处才是我真正的充电方式', scores: [0,5,1,0,5,0,3,1,0] }
+    ]
+  },
+  {
+    id: 5,
+    question: '🌪️ 计划突然被打乱——航班取消、约会被放鸽子、方案被推翻，你的第一反应是？',
+    options: [
+      { text: '有点不安，但我能慢慢调整和适应', scores: [1,0,4,1,1,0,0,3,1] },
+      { text: '兴奋！终于有点不一样的事情了', scores: [2,0,0,1,0,4,3,0,5] },
+      { text: '先冷静分析一下变化会带来什么影响', scores: [0,4,1,0,4,0,1,2,0] },
+      { text: '想想有没有办法把变化变成机遇', scores: [1,2,1,0,1,3,4,1,2] }
+    ]
+  },
+  {
+    id: 6,
+    question: '🏡 抛开一切现实限制，你理想中最幸福的生活画面是？',
+    options: [
+      { text: '一间洒满阳光的小屋，身边有爱的人和猫', scores: [5,0,2,5,0,0,0,1,0] },
+      { text: '一个小而美的工作室，专注做自己热爱的事', scores: [0,3,1,1,2,0,5,2,1] },
+      { text: '在一个安静的地方，看书、写字、思考人生', scores: [0,5,2,1,4,0,3,0,0] },
+      { text: '随时可以出发的行李箱，下一站未知而让人期待', scores: [1,0,0,0,0,3,2,0,5] }
+    ]
+  },
+  {
+    id: 7,
+    question: '🗣️ 开会时，有人自信满满地提出了一个你明确知道有问题的方案，你会？',
+    options: [
+      { text: '保持沉默，不想引起冲突和尴尬', scores: [1,0,3,3,1,1,0,0,0] },
+      { text: '委婉地表达不同意见，注意不伤害对方感受', scores: [3,1,2,4,0,0,1,1,1] },
+      { text: '直接说出你的看法，有理有据地讨论', scores: [0,4,0,0,3,3,1,2,0] },
+      { text: '提出一个全新的角度，让大家重新思考这个问题', scores: [0,3,1,0,2,1,5,1,3] }
+    ]
+  },
+  {
+    id: 8,
+    question: '😰 压力山大的那几天，整个人都快绷不住了，你最可能做什么来缓解？',
+    options: [
+      { text: '找朋友聊聊，说出来就好多了', scores: [4,0,1,3,0,2,0,1,0] },
+      { text: '一个人消化，运动、听歌或散步', scores: [1,2,4,1,3,0,1,1,2] },
+      { text: '把压力转化为行动力，疯狂做事', scores: [1,1,0,0,0,5,1,4,1] },
+      { text: '转移注意力，去做一件完全不相干的新事情', scores: [1,0,1,1,0,2,3,0,5] }
+    ]
+  },
+  {
+    id: 9,
+    question: '🎀 好闺蜜/好兄弟的生日快到了，挑选礼物时你最在意的是？',
+    options: [
+      { text: '用心程度——精心挑选对方真正需要的', scores: [3,1,2,4,0,0,0,2,0] },
+      { text: '惊喜感——一个对方完全没想到但会很开心的东西', scores: [2,0,0,2,0,2,5,0,3] },
+      { text: '实用——一定要是对方用得上、不会落灰的', scores: [1,2,1,0,1,0,0,5,0] },
+      { text: '品牌和品质——好的东西本身就值得分享', scores: [1,2,0,1,2,1,1,2,1] }
+    ]
+  },
+  {
+    id: 10,
+    question: '⚡ Deadline 在即，哪种状态下你的灵感和效率反而最高？',
+    options: [
+      { text: '在安静的咖啡厅或图书馆，有自己的节奏', scores: [1,3,2,1,4,0,2,1,1] },
+      { text: '和志同道合的人一起头脑风暴，互相激发', scores: [3,0,1,2,0,3,3,0,2] },
+      { text: '按照清晰的计划和目标，一步一步执行', scores: [1,2,2,0,1,0,0,5,0] },
+      { text: '灵感来了就猛干，不强求固定的节奏', scores: [1,0,0,1,0,3,4,0,4] }
+    ]
+  },
+  {
+    id: 11,
+    question: '🌱 回望走过的路，你觉得是什么经历最深刻地塑造了今天的你？',
+    options: [
+      { text: '家庭的爱与支持，给了我相信世界的基础', scores: [5,0,2,4,0,1,0,2,0] },
+      { text: '独自面对困难的经历，让我变得强大', scores: [0,3,1,0,4,2,1,4,1] },
+      { text: '广泛的阅读和旅行，塑造了我的世界观', scores: [1,4,1,1,2,0,4,0,5] },
+      { text: '那些与众不同的兴趣和探索，让我成为我自己', scores: [1,1,0,1,0,2,5,0,4] }
+    ]
+  },
+  {
+    id: 12,
+    question: '🦸 如果老天突然送你一种超能力，只能选一个，你会毫不犹豫选？',
+    options: [
+      { text: '治愈他人的伤痛和情绪', scores: [5,0,1,4,0,1,1,1,0] },
+      { text: '穿越时间，看到过去和未来', scores: [0,5,0,0,4,0,3,0,1] },
+      { text: '和动物及植物沟通', scores: [1,1,5,1,1,0,1,0,3] },
+      { text: '瞬间到达世界任何一个地方', scores: [1,0,0,0,0,3,2,0,5] }
+    ]
+  },
+  {
+    id: 13,
+    question: '👯 在你的朋友圈里，大家潜意识里把你当作什么样的存在？',
+    options: [
+      { text: '情绪支柱——大家有什么心事第一个找我', scores: [5,1,2,3,0,0,0,2,0] },
+      { text: '智囊团——遇到难题时大家来问我的意见', scores: [0,5,0,0,4,0,1,3,0] },
+      { text: '气氛担当——有我在的场合不会冷场', scores: [2,0,1,1,0,5,3,0,2] },
+      { text: '那个「有趣的朋友」——我带大家体验各种新鲜事', scores: [1,0,1,1,0,2,3,0,5] }
+    ]
+  },
+  {
+    id: 14,
+    question: '🔮 想到「未来」这个词，哪句话最能代表你心底的声音？',
+    options: [
+      { text: '我相信一切都会越来越好，保持期待', scores: [4,0,1,3,0,2,2,1,1] },
+      { text: '未来不可预测，做好当下的每一件事', scores: [1,2,2,0,2,0,0,5,0] },
+      { text: '未来是一张白纸，我想画成什么就是什么', scores: [1,1,0,1,0,3,5,0,4] },
+      { text: '我不太想那么远，跟着感觉走就好', scores: [1,0,2,1,1,1,1,0,4] }
+    ]
+  },
+  {
+    id: 15,
+    question: '💫 你觉得人生的意义更接近于？',
+    options: [
+      { text: '爱与被爱——在关系中感受生命的温度', scores: [5,0,2,5,0,1,0,1,0] },
+      { text: '理解与创造——用思考和创造留下痕迹', scores: [0,5,0,0,3,0,5,2,1] },
+      { text: '体验与感受——尽可能多地看世界、爱世界', scores: [1,1,1,1,0,3,2,0,5] },
+      { text: '承担与奉献——让身边的世界因为自己变好一点', scores: [2,1,4,1,1,1,0,5,1] }
+    ]
+  },
+  {
+    id: 16,
+    question: '🌧️ 当深夜情绪突然低落时，你更可能？',
+    options: [
+      { text: '翻开相册或旧聊天记录，让回忆温暖自己', scores: [4,0,1,5,1,0,1,0,0] },
+      { text: '一个人安静地思考，试图理解情绪的来源', scores: [0,5,1,0,4,0,2,1,0] },
+      { text: '起身做点什么——打扫房间、煮碗面、出门跑一圈', scores: [1,1,0,0,0,4,0,4,2] },
+      { text: '打开一部从来没看过的电影或纪录片，换个世界沉浸', scores: [1,1,1,1,0,1,4,0,4] }
+    ]
+  },
+  {
+    id: 17,
+    question: '🎭 如果人生是一部电影，你希望你的角色是？',
+    options: [
+      { text: '那个在关键时刻温暖所有人的治愈系主角', scores: [5,0,2,4,0,1,1,1,0] },
+      { text: '那个话不多、但每次出场都让人印象深刻的智者', scores: [0,5,1,0,4,0,3,2,0] },
+      { text: '那个不断突破边界、永远在路上的冒险家', scores: [1,0,0,0,0,3,2,0,5] },
+      { text: '那个默默支撑整个故事的幕后英雄', scores: [2,1,4,1,1,0,0,5,1] }
+    ]
+  },
+  {
+    id: 18,
+    question: '🪞 照镜子时，你更常想到什么？',
+    options: [
+      { text: '「今天也要好好爱自己呀」——给自己一个微笑', scores: [4,0,1,5,0,1,1,0,1] },
+      { text: '「我是谁」——思考自己的成长、变化和方向', scores: [0,4,1,0,4,0,3,1,2] },
+      { text: '「OK 就这样，出发吧」——不太多想，行动最重要', scores: [1,1,0,0,0,5,1,3,2] },
+      { text: '「世界那么大，我还有好多地方没去呢」', scores: [1,0,0,1,0,1,3,0,5] }
+    ]
+  },
+  {
+    id: 19,
+    question: '🎁 你收到一份完全用不上的礼物，你的真实反应是？',
+    options: [
+      { text: '感动于对方的心意，真诚道谢并好好收起来', scores: [5,0,2,4,0,0,0,1,0] },
+      { text: '开心但默默想「下次可以送给更需要的人」', scores: [1,3,3,1,1,0,1,2,1] },
+      { text: '当场开心地打开，觉得这份意外本身就有趣', scores: [2,0,1,1,0,4,3,0,2] },
+      { text: '想着能不能把它改造成自己喜欢的样子', scores: [1,1,0,0,0,1,5,0,3] }
+    ]
+  },
+  {
+    id: 20,
+    question: '🌟 如果可以给五年前的自己一句话，你会说？',
+    options: [
+      { text: '「你已经做得很好了，不要太苛责自己」', scores: [4,0,1,5,1,0,0,1,1] },
+      { text: '「有些选择没有对错，别想太多，去经历就好」', scores: [1,3,2,1,2,1,2,0,4] },
+      { text: '「大胆一点！那些你不敢做的事，后来都成了遗憾」', scores: [1,0,0,0,0,4,3,1,3] },
+      { text: '「你的坚持是对的，时间会证明一切」', scores: [1,2,2,0,2,1,1,5,0] }
+    ]
+  }
+];
+
+/* ============================================================
+   全局状态
+   ============================================================ */
+const state = {
+  currentPage: 'welcome',       // 'welcome' | 'quiz' | 'result'
+  currentQuestion: 0,          // 0-based index
+  answers: {},                 // { questionId: optionIndex }
+  resultPersonalityId: null,   // computed result
+};
+
+/* ============================================================
+   DOM 引用
+   ============================================================ */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+const pages = {
+  welcome: $('#page-welcome'),
+  quiz: $('#page-quiz'),
+  result: $('#page-result'),
+};
+
+const btnStart = $('#btn-start');
+const btnPrev = $('#btn-prev');
+const btnNext = $('#btn-next');
+const btnSound = $('#btn-sound');
+const quizCard = $('#quiz-card');
+const quizQNum = $('#quiz-q-num');
+const quizQText = $('#quiz-q-text');
+const quizOptions = $('#quiz-options');
+const quizProgressLabel = $('#quiz-progress-label');
+const quizProgressPct = $('#quiz-progress-pct');
+const quizProgressFill = $('#quiz-progress-fill');
+const resultContent = $('#result-content');
+
+/* ============================================================
+   页面切换
+   ============================================================ */
+function showPage(pageName) {
+  Object.values(pages).forEach(p => p.classList.remove('active'));
+  pages[pageName].classList.add('active');
+  state.currentPage = pageName;
+
+  // 重新触发入场动画
+  const page = pages[pageName];
+  page.style.animation = 'none';
+  page.offsetHeight; // reflow
+  page.style.animation = '';
+}
+
+/* ============================================================
+   音效系统（Web Audio API）
+   ============================================================ */
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playTone(freq, duration, type = 'sine', vol = 0.08) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) {
+    // 静默处理音频错误
+  }
+}
+
+function sfxSelect() { playTone(880, 0.1, 'sine', 0.06); }
+function sfxNext()   { playTone(660, 0.08, 'sine', 0.05); }
+function sfxPrev()   { playTone(440, 0.08, 'sine', 0.05); }
+function sfxResult() { playTone(1047, 0.15, 'sine', 0.07); setTimeout(() => playTone(1319, 0.2, 'sine', 0.07), 150); }
+
+/* ============================================================
+   🎵 背景音乐系统（程序化环境音乐）
+   使用 Web Audio API 生成柔和氛围音乐
+   ============================================================ */
+let musicEnabled = false;
+let musicPlaying = false;
+let musicNodes = [];
+let musicTimeout = null;
+
+// 五声音阶（C大调）- 自然治愈的频率
+const PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 784.00];
+
+// 和弦进行（根音序列）- 营造流动感
+const CHORD_ROOTS = [0, 3, 2, 4, 0, 3, 2, 1]; // I vi ii V I vi ii iii 风格
+
+function createAmbientPad(ctx, freq, startTime, duration, vol = 0.03) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  // 使用三角波 + 轻微失谐制造温暖质感
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(freq, startTime);
+  osc.frequency.linearRampToValueAtTime(freq * 1.002, startTime + duration); // 微失谐
+
+  // 低通滤波让音色更柔和
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(800, startTime);
+  filter.Q.setValueAtTime(0.5, startTime);
+
+  // 音量包络：渐入渐出
+  const fadeIn = Math.min(duration * 0.2, 1.5);
+  const fadeOut = Math.min(duration * 0.3, 2);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(vol, startTime + fadeIn);
+  gain.gain.setValueAtTime(vol, startTime + duration - fadeOut);
+  gain.gain.linearRampToValueAtTime(0, startTime + duration);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+
+  return { osc, gain, filter };
+}
+
+function createSparkle(ctx, freq, startTime, vol = 0.015) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, startTime);
+
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(vol, startTime + 0.3);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + 2.5);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + 2.5);
+
+  return { osc, gain };
+}
+
+function scheduleMusicPassage() {
+  if (!musicEnabled) return;
+
+  const ctx = getAudioCtx();
+  const now = ctx.currentTime;
+  const passageDuration = 12; // 每段 12 秒
+
+  // 选择当前和弦根音（顺序循环）
+  const chordIdx = Math.floor(now / passageDuration) % CHORD_ROOTS.length;
+  const rootIdx = CHORD_ROOTS[chordIdx];
+  const root = PENTATONIC[rootIdx % PENTATONIC.length];
+
+  // 构建和弦音（根音 + 三度 + 五度 + 八度）
+  const chord = [
+    root,
+    PENTATONIC[(rootIdx + 2) % PENTATONIC.length],
+    PENTATONIC[(rootIdx + 4) % PENTATONIC.length],
+    root * 2,
+  ];
+
+  // 铺底和弦
+  chord.forEach((freq, i) => {
+    createAmbientPad(ctx, freq, now + i * 0.15, passageDuration + 1, 0.025);
+  });
+
+  // 添加闪烁高音（随机从音阶中选）
+  const sparkleCount = 3 + Math.floor(Math.random() * 4);
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkleFreq = PENTATONIC[Math.floor(Math.random() * PENTATONIC.length)] * 2;
+    const sparkleTime = now + 1 + Math.random() * (passageDuration - 2);
+    createSparkle(ctx, sparkleFreq, sparkleTime, 0.012);
+  }
+
+  // 安排下一段
+  musicTimeout = setTimeout(scheduleMusicPassage, passageDuration * 1000 - 200);
+}
+
+function startMusic() {
+  if (musicPlaying) return;
+  musicPlaying = true;
+
+  const ctx = getAudioCtx();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+
+  scheduleMusicPassage();
+  $('#btn-music').classList.add('playing');
+  $('#btn-music').textContent = '🎶';
+}
+
+function stopMusic() {
+  musicPlaying = false;
+  if (musicTimeout) {
+    clearTimeout(musicTimeout);
+    musicTimeout = null;
+  }
+  $('#btn-music').classList.remove('playing');
+  $('#btn-music').textContent = '🎵';
+}
+
+/* ============================================================
+   音效开关 UI
+   ============================================================ */
+function updateSoundButton() {
+  btnSound.textContent = soundEnabled ? '🔊' : '🔇';
+}
+
+btnSound.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  updateSoundButton();
+  localStorage.setItem('personality-test-sound', soundEnabled ? '1' : '0');
+  if (soundEnabled) {
+    playTone(600, 0.08, 'sine', 0.04);
+  }
+});
+
+// 音乐开关
+const btnMusic = $('#btn-music');
+btnMusic.addEventListener('click', () => {
+  musicEnabled = !musicEnabled;
+  localStorage.setItem('personality-test-music', musicEnabled ? '1' : '0');
+  if (musicEnabled) {
+    startMusic();
+  } else {
+    stopMusic();
+  }
+});
+
+// 从 localStorage 恢复音效和音乐设置
+(function initSound() {
+  const savedSound = localStorage.getItem('personality-test-sound');
+  if (savedSound === '1') soundEnabled = true;
+  updateSoundButton();
+
+  const savedMusic = localStorage.getItem('personality-test-music');
+  if (savedMusic === '1') {
+    musicEnabled = true;
+    const resumeMusic = () => {
+      if (musicEnabled && !musicPlaying) {
+        startMusic();
+      }
+      document.removeEventListener('click', resumeMusic);
+    };
+    document.addEventListener('click', resumeMusic, { once: false });
+  }
+})();
+
+/* ============================================================
+   🌙 暗色模式
+   ============================================================ */
+const btnTheme = $('#btn-theme');
+
+function applyTheme(mode) {
+  if (mode === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    btnTheme.textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    btnTheme.textContent = '🌙';
+  }
+}
+
+function getPreferredTheme() {
+  const saved = localStorage.getItem('personality-test-theme');
+  if (saved === 'dark' || saved === 'light') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+applyTheme(getPreferredTheme());
+
+btnTheme.addEventListener('click', () => {
+  const current = document.documentElement.hasAttribute('data-theme') ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('personality-test-theme', next);
+});
+
+// 监听系统主题变化
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('personality-test-theme')) {
+    applyTheme(e.matches ? 'dark' : 'light');
+  }
+});
+
+/* ============================================================
+   ✨ 粒子系统
+   ============================================================ */
+const particleCanvas = $('#particle-canvas');
+const pCtx = particleCanvas.getContext('2d');
+let particles = [];
+let particleAnimId = null;
+
+function resizeParticleCanvas() {
+  particleCanvas.width = window.innerWidth;
+  particleCanvas.height = window.innerHeight;
+}
+resizeParticleCanvas();
+window.addEventListener('resize', resizeParticleCanvas);
+
+function spawnParticles(x, y, color, count = 18) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 / count) * i + Math.random() * 0.3;
+    const speed = 2 + Math.random() * 5;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      decay: 0.015 + Math.random() * 0.03,
+      size: 3 + Math.random() * 4,
+      color,
+    });
+  }
+  if (!particleAnimId) animateParticles();
+}
+
+function animateParticles() {
+  pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+  particles = particles.filter(p => p.life > 0);
+  if (particles.length === 0) {
+    particleAnimId = null;
+    return;
+  }
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.04; // 微重力
+    p.life -= p.decay;
+    p.size *= 0.985;
+
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    pCtx.fillStyle = p.color + Math.round(p.life * 255).toString(16).padStart(2, '0');
+    pCtx.fill();
+  });
+
+  particleAnimId = requestAnimationFrame(animateParticles);
+}
+
+/* ============================================================
+   📳 触觉反馈
+   ============================================================ */
+function haptic(pattern = 10) {
+  if (navigator.vibrate) {
+    navigator.vibrate(pattern);
+  }
+}
+
+/* ============================================================
+   🌬️ 呼吸引导
+   ============================================================ */
+function showBreatheGuide(callback) {
+  const overlay = $('#breathe-overlay');
+  const ring = $('#breathe-ring');
+  const text = overlay.querySelector('.breathe-text');
+
+  // 重置动画
+  ring.style.animation = 'none';
+  text.style.animation = 'none';
+  ring.offsetHeight;
+  text.offsetHeight;
+  ring.style.animation = '';
+  text.style.animation = '';
+
+  overlay.style.display = 'flex';
+  haptic([30, 50, 30, 50, 30]);
+
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    if (callback) callback();
+  }, 2600);
+}
+
+/* ============================================================
+   📊 统计数据（本地存储累计）
+   ============================================================ */
+function recordCompletion(personalityId) {
+  const key = 'personality-test-stats';
+  let stats;
+  try {
+    stats = JSON.parse(localStorage.getItem(key)) || {};
+  } catch (e) {
+    stats = {};
+  }
+  stats[personalityId] = (stats[personalityId] || 0) + 1;
+  // 总完成次数
+  stats._total = (stats._total || 0) + 1;
+  localStorage.setItem(key, JSON.stringify(stats));
+}
+
+function getStats() {
+  try {
+    return JSON.parse(localStorage.getItem('personality-test-stats')) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function renderStatsHTML(personalityId) {
+  const stats = getStats();
+  const total = stats._total || 1;
+  const myCount = stats[personalityId] || 1;
+
+  // 找出最高频人格
+  let topId = -1, topCount = 0;
+  Object.entries(stats).forEach(([k, v]) => {
+    if (k.startsWith('_')) return;
+    if (v > topCount) { topCount = v; topId = parseInt(k); }
+  });
+
+  const myPct = Math.round((myCount / total) * 100);
+  const topName = topId >= 0 ? PERSONALITIES[topId].name : '—';
+
+  return `
+    <div class="card result-card stats-card">
+      <h3>📊 趣味数据</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" style="color:${PERSONALITIES[personalityId].color}">${myPct}%</span>
+          <span class="stat-label">测试者中<br>和你同类型</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">${total}</span>
+          <span class="stat-label">已有测试<br>完成次数</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">${topName}</span>
+          <span class="stat-label">最常见<br>人格类型</span>
+        </div>
+      </div>
+      <p class="stats-note">📝 以上数据来自本设备的累计统计</p>
+    </div>
+  `;
+}
+
+/* ============================================================
+   🪞 巴纳姆效应语句库
+   ============================================================ */
+const BARNUM_POOL = [
+  '你拥有可观的潜能，但还没有完全发挥出来。',
+  '外表看起来你挺从容的，但内心其实比谁都敏感。',
+  '有时候你会怀疑自己是不是做得不够好——但别人眼里的你，比你想象中优秀得多。',
+  '你对自由有强烈的渴望，不喜欢被条条框框束缚住。',
+  '在陌生人面前你比较安静克制，但在熟人面前会完全放飞自我。',
+  '你讨厌虚假和伪装，但也知道有些场合需要一点"社交面具"。',
+  '你曾经经历过一段让你快速成长的艰难时光——那时候你以为自己撑不过去，但你还是走过来了。',
+  '你渴望被理解，但有时又不太愿意把自己的全部展示出来。',
+  '有时候你会突然陷入沉思，想一些关于人生意义的大问题。',
+];
+
+function getBarnumHTML() {
+  // 随机选 2 条
+  const shuffled = [...BARNUM_POOL].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, 2);
+  return `
+    <div class="card result-card barnum-card">
+      <h3>🪞 你可能也感受过...</h3>
+      ${selected.map(s => `<p class="barnum-item">"${s}"</p>`).join('')}
+    </div>
+  `;
+}
+
+/* ============================================================
+   本地存储：保存/恢复进度
+   ============================================================ */
+function saveProgress() {
+  const data = {
+    currentQuestion: state.currentQuestion,
+    answers: state.answers,
+    resultPersonalityId: state.resultPersonalityId,
+    timestamp: Date.now(),
+  };
+  localStorage.setItem('personality-test-progress', JSON.stringify(data));
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem('personality-test-progress');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearProgress() {
+  localStorage.removeItem('personality-test-progress');
+}
+
+/* ============================================================
+   渲染答题页
+   ============================================================ */
+let isAnimating = false;
+
+function renderQuestion(direction = 'next') {
+  const q = QUESTIONS[state.currentQuestion];
+  const total = QUESTIONS.length;
+  const idx = state.currentQuestion + 1;
+  const pct = Math.round((idx / total) * 100);
+
+  // 更新进度条
+  quizProgressLabel.textContent = `第 ${idx} / ${total} 题`;
+  quizProgressPct.textContent = `${pct}%`;
+  quizProgressFill.style.width = `${pct}%`;
+
+  // 更新题目编号
+  quizQNum.textContent = `Q${idx}`;
+
+  // 切题动画
+  const animClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
+  const animInClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
+
+  quizCard.classList.add(animClass);
+
+  setTimeout(() => {
+    // 更新题目内容
+    quizQText.textContent = q.question;
+    renderOptions();
+
+    quizCard.classList.remove(animClass);
+    quizCard.classList.add(animInClass);
+
+    setTimeout(() => {
+      quizCard.classList.remove(animInClass);
+    }, 300);
+  }, 250);
+
+  // 更新导航按钮
+  updateNavButtons();
+}
+
+function renderOptions() {
+  const q = QUESTIONS[state.currentQuestion];
+  const selectedIdx = state.answers[q.id];
+
+  // 每个位置的默认图标
+  const positionIcons = ['🌟', '💭', '🌿', '🚀'];
+
+  quizOptions.innerHTML = q.options.map((opt, i) => {
+    const isSelected = (selectedIdx === i);
+    const icon = opt.icon || positionIcons[i % positionIcons.length];
+    return `
+      <button class="quiz-option${isSelected ? ' selected' : ''}"
+              data-index="${i}" type="button"
+              aria-selected="${isSelected}">
+        <span class="quiz-option-icon">${icon}</span>
+        <span class="quiz-option-radio"></span>
+        <span class="quiz-option-text">${opt.text}</span>
+      </button>
+    `;
+  }).join('');
+
+  // 绑定点击事件
+  quizOptions.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(btn.dataset.index);
+      selectOption(idx, e);
+    });
+  });
+}
+
+function selectOption(optionIndex, event) {
+  const q = QUESTIONS[state.currentQuestion];
+  state.answers[q.id] = optionIndex;
+
+  // 更新 UI
+  const allBtns = quizOptions.querySelectorAll('.quiz-option');
+  allBtns.forEach((btn, i) => {
+    btn.classList.toggle('selected', i === optionIndex);
+    btn.setAttribute('aria-selected', i === optionIndex ? 'true' : 'false');
+  });
+
+  // ✨ 粒子效果
+  if (event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const p = PERSONALITIES[state.resultPersonalityId] || PERSONALITIES[0];
+    spawnParticles(cx, cy, '#9b7ec4', 16);
+  }
+
+  // 📳 触觉反馈
+  haptic(10);
+
+  sfxSelect();
+  updateNavButtons();
+  saveProgress();
+}
+
+function updateNavButtons() {
+  const total = QUESTIONS.length;
+
+  // 上一题按钮
+  if (state.currentQuestion === 0) {
+    btnPrev.style.visibility = 'hidden';
+  } else {
+    btnPrev.style.visibility = 'visible';
+  }
+
+  // 下一题按钮
+  const q = QUESTIONS[state.currentQuestion];
+  const hasAnswer = state.answers[q.id] !== undefined;
+
+  if (state.currentQuestion === total - 1) {
+    btnNext.textContent = '查看结果 ✨';
+  } else {
+    btnNext.textContent = '下一题 →';
+  }
+  btnNext.disabled = !hasAnswer;
+}
+
+function goNext() {
+  const q = QUESTIONS[state.currentQuestion];
+  if (state.answers[q.id] === undefined) return;
+  if (isAnimating) return;
+
+  if (state.currentQuestion < QUESTIONS.length - 1) {
+    isAnimating = true;
+    sfxNext();
+
+    // 🌬️ 呼吸引导（每 5 题一次，避免太频繁）
+    if ((state.currentQuestion + 1) % 5 === 0) {
+      showBreatheGuide(() => {
+        state.currentQuestion++;
+        saveProgress();
+        renderQuestion('next');
+        setTimeout(() => { isAnimating = false; }, 350);
+      });
+    } else {
+      state.currentQuestion++;
+      saveProgress();
+      renderQuestion('next');
+      setTimeout(() => { isAnimating = false; }, 350);
+    }
+  } else {
+    // 最后一题 → 计算结果
+    sfxResult();
+    haptic([20, 50, 20, 50, 40]);
+    computeResult();
+  }
+}
+
+function goPrev() {
+  if (state.currentQuestion === 0) return;
+  if (isAnimating) return;
+
+  isAnimating = true;
+  sfxPrev();
+  state.currentQuestion--;
+  saveProgress();
+  renderQuestion('prev');
+  setTimeout(() => { isAnimating = false; }, 350);
+}
+
+/* ============================================================
+   评分计算
+   ============================================================ */
+function computeResult() {
+  const scores = new Array(PERSONALITIES.length).fill(0);
+
+  QUESTIONS.forEach(q => {
+    const selectedIdx = state.answers[q.id];
+    if (selectedIdx !== undefined) {
+      const weightArr = q.options[selectedIdx].scores;
+      weightArr.forEach((w, i) => {
+        scores[i] += w;
+      });
+    }
+  });
+
+  // 找最高分
+  let maxScore = -1;
+  let maxIdx = 0;
+  scores.forEach((s, i) => {
+    if (s > maxScore) {
+      maxScore = s;
+      maxIdx = i;
+    }
+  });
+
+  state.resultPersonalityId = maxIdx;
+  saveProgress();
+  recordCompletion(maxIdx); // 记录统计数据
+
+  // 🎬 先播放揭晓动画，动画结束后渲染结果
+  playRevealAnimation(maxIdx, () => {
+    renderResult();
+    showPage('result');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/* ============================================================
+   🎬 结果揭晓动画
+   ============================================================ */
+function playRevealAnimation(personalityId, onComplete) {
+  const p = PERSONALITIES[personalityId];
+  const overlay = $('#reveal-overlay');
+  const orb = $('#reveal-orb');
+  const nameEl = $('#reveal-name');
+
+  // 重置
+  orb.className = 'reveal-orb';
+  orb.style.background = '';
+  orb.style.boxShadow = '';
+  nameEl.className = 'reveal-name';
+  nameEl.textContent = '';
+  overlay.classList.remove('fade-out');
+  overlay.style.display = 'flex';
+
+  // 阶段1：光点浮现 (0ms)
+  setTimeout(() => {
+    orb.style.background = `radial-gradient(circle, ${p.color}, ${p.color}cc)`;
+    orb.classList.add('expand');
+  }, 100);
+
+  // 阶段2：光点脉动 + 炸开 (700ms)
+  setTimeout(() => {
+    orb.classList.add('pulse');
+  }, 700);
+
+  // 阶段3：颜色晕染全屏 + 显示名称 (1500ms)
+  setTimeout(() => {
+    orb.classList.remove('pulse');
+    orb.classList.add('burst');
+    orb.style.boxShadow = 'none';
+    nameEl.textContent = p.name;
+    nameEl.classList.add('show');
+    nameEl.style.color = isLightColor(p.color) ? '#3a3548' : '#fff';
+  }, 1500);
+
+  // 阶段4：遮罩淡出，显露结果页 (2500ms)
+  setTimeout(() => {
+    overlay.classList.add('fade-out');
+  }, 2500);
+
+  // 阶段5：移除遮罩，执行回调 (3300ms)
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    if (onComplete) onComplete();
+  }, 3300);
+}
+
+// 判断颜色是否为浅色（用于决定文字颜色）
+function isLightColor(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 170;
+}
+
+/* ============================================================
+   渲染结果页
+   ============================================================ */
+function renderResult() {
+  const p = PERSONALITIES[state.resultPersonalityId];
+
+  resultContent.innerHTML = `
+    <div class="result-hero">
+      <div class="result-color-circle" style="background: linear-gradient(135deg, ${p.color}, ${p.color}dd);"></div>
+      <h2 class="result-personality-name">${p.name}</h2>
+      <p class="result-tagline">${p.tagline}</p>
+      <div class="result-tags">
+        ${p.traits.map(t => `<span class="result-tag" style="background:${p.colorLight};color:${p.color};">${t}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="card result-card radar-card">
+      <h3>📊 你的性格维度</h3>
+      <canvas id="radar-canvas" width="520" height="420" aria-label="性格维度雷达图"></canvas>
+    </div>
+
+    <div class="card result-card">
+      <h3>🌟 你的优势</h3>
+      <p>${p.strengths}</p>
+    </div>
+
+    <div class="card result-card">
+      <h3>🌱 成长空间</h3>
+      <p>${p.weaknesses}</p>
+    </div>
+
+    <div class="card result-card">
+      <h3>🔍 性格分析</h3>
+      <p>${p.analysis}</p>
+    </div>
+
+    <div class="card result-card">
+      <h3>💼 适合场景</h3>
+      <p>${p.scenarios}</p>
+    </div>
+
+    <div class="card result-card">
+      <h3>💛 相处建议</h3>
+      <p style="white-space: pre-line;">${p.advice}</p>
+    </div>
+
+    ${getBarnumHTML()}
+    ${renderStatsHTML(state.resultPersonalityId)}
+  `;
+
+  // 渲染雷达图
+  setTimeout(() => drawRadarChart(state.resultPersonalityId), 200);
+}
+
+/* ============================================================
+   📊 雷达图绘制 (Canvas)
+   ============================================================ */
+function drawRadarChart(personalityId) {
+  const canvas = $('#radar-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const p = PERSONALITIES[personalityId];
+  const scores = DIMENSION_SCORES[personalityId];
+  const dims = DIMENSION_LABELS;
+
+  // 高清适配
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const displayW = Math.min(canvas.parentElement.clientWidth - 40, 520);
+  const displayH = displayW * 0.8;
+  canvas.style.width = displayW + 'px';
+  canvas.style.height = displayH + 'px';
+  canvas.width = displayW * dpr;
+  canvas.height = displayH * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = displayW;
+  const h = displayH;
+  const cx = w / 2;
+  const cy = h / 2 + 10;
+  const radius = Math.min(w, h) * 0.32;
+  const levels = 5;
+  const n = dims.length;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // 绘制网格
+  for (let level = 1; level <= levels; level++) {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+      const r = (radius / levels) * level;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = level === levels ? '#d8d4de' : '#ece9f0';
+    ctx.lineWidth = level === levels ? 1.5 : 0.8;
+    ctx.fillStyle = level % 2 === 0 ? 'rgba(155, 126, 196, 0.03)' : 'transparent';
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // 绘制轴线
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+    ctx.strokeStyle = '#e8e5ec';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // 绘制数据区域
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    const r = (radius * scores[i]) / 100;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = p.color + '30';
+  ctx.fill();
+  ctx.strokeStyle = p.color;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // 绘制数据点
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    const r = (radius * scores[i]) / 100;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
+  // 绘制标签
+  ctx.fillStyle = '#5a5568';
+  ctx.font = '600 12px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 / n) * i - Math.PI / 2;
+    const labelR = radius + 28;
+    const x = cx + labelR * Math.cos(angle);
+    const y = cy + labelR * Math.sin(angle);
+    ctx.fillText(dims[i] + ' ' + scores[i], x, y);
+  }
+}
+
+// 窗口大小变化时重绘雷达图
+let radarResizeTimer;
+window.addEventListener('resize', () => {
+  if (state.currentPage === 'result' && state.resultPersonalityId !== null) {
+    clearTimeout(radarResizeTimer);
+    radarResizeTimer = setTimeout(() => drawRadarChart(state.resultPersonalityId), 300);
+  }
+});
+
+/* ============================================================
+   📸 分享名片生成
+   ============================================================ */
+function generateShareCard(personalityId) {
+  const p = PERSONALITIES[personalityId];
+  const card = $('#share-card');
+
+  // 根据人格类型选择代表性 emoji
+  const iconMap = ['☀️', '🌊', '🌿', '🌸', '🌙', '🔥', '✨', '🏔️', '🌌'];
+  const icon = iconMap[personalityId] || '🎨';
+
+  // 生成一句走心 quote
+  const quotes = [
+    '「温柔地对待世界，世界也会温柔地回应你」',
+    '「真正的深度，不需要喧哗来证明」',
+    '「慢慢来，比较快」',
+    '「柔软，从不等于软弱」',
+    '「看得通透，才能活得轻盈」',
+    '「去成为你本想成为的那种人，永远不会太迟」',
+    '「你灵魂里的独特，是这个世界的稀缺品」',
+    '「踏实走好每一步，时间会给你答案」',
+    '「世界是一本书，不旅行的人只读了一页」',
+  ];
+
+  card.style.background = `linear-gradient(160deg, ${p.color}, ${p.color}cc, ${p.color}99)`;
+  card.innerHTML = `
+    <div class="share-card-inner">
+      <div class="share-card-icon">${icon}</div>
+      <div class="share-card-name">${p.name}</div>
+      <div class="share-card-tagline">${p.tagline}</div>
+      <div class="share-card-tags">
+        ${p.traits.map(t => `<span class="share-card-tag">${t}</span>`).join('')}
+      </div>
+      <div class="share-card-divider"></div>
+      <div class="share-card-quote">${quotes[personalityId]}</div>
+      <div class="share-card-footer">🎨 色彩人格测试</div>
+      <div class="share-card-watermark">扫码测测你的内在颜色</div>
+    </div>
+  `;
+
+  return card;
+}
+
+async function captureShareCard() {
+  const card = generateShareCard(state.resultPersonalityId);
+
+  // 临时移到可见区域
+  card.style.left = '0';
+  card.style.top = '0';
+  card.style.zIndex = '300';
+
+  showToast('📸 正在生成你的专属名片...');
+
+  // 等样式渲染
+  await new Promise(r => setTimeout(r, 300));
+
+  try {
+    const canvas = await html2canvas(card, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+    });
+
+    // 下载
+    const link = document.createElement('a');
+    link.download = `my-color-${PERSONALITIES[state.resultPersonalityId].name}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('📸 专属名片已保存！发朋友圈吧～');
+  } catch (e) {
+    showToast('⚠️ 生成失败，请重试或直接截图');
+  }
+
+  // 隐藏回去
+  card.style.left = '-9999px';
+  card.style.top = '0';
+  card.style.zIndex = '';
+}
+function getResultText() {
+  const p = PERSONALITIES[state.resultPersonalityId];
+  return `🎨 我的内在色彩：${p.name}\n\n"${p.tagline}"\n\n核心特质：${p.traits.join(' · ')}\n\n🌟 优势：\n${p.strengths}\n\n🌱 成长空间：\n${p.weaknesses}\n\n💛 相处建议：\n${p.advice.replace(/\n/g, '\n')}\n\n—— 色彩人格测试 · 发现你的内在颜色`;
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+async function copyResult() {
+  try {
+    await navigator.clipboard.writeText(getResultText());
+    showToast('✅ 结果已复制，分享给朋友吧～');
+  } catch (e) {
+    // 降级方案
+    const textarea = document.createElement('textarea');
+    textarea.value = getResultText();
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('✅ 结果已复制，分享给朋友吧～');
+  }
+}
+
+async function screenshotResult() {
+  showToast('📸 正在生成截图...');
+  try {
+    const el = resultContent;
+    const canvas = await html2canvas(el, {
+      backgroundColor: '#f9f7f4',
+      scale: 2,
+      useCORS: true,
+    });
+    // 下载
+    const link = document.createElement('a');
+    link.download = 'my-color-personality.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('📸 截图已保存！');
+  } catch (e) {
+    // html2canvas 未加载时的降级
+    showToast('⚠️ 截图功能加载中，请稍后再试或直接截图');
+  }
+}
+
+function retryTest() {
+  state.currentQuestion = 0;
+  state.answers = {};
+  state.resultPersonalityId = null;
+  clearProgress();
+  showPage('welcome');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 结果页事件委托
+resultContent.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+
+  if (btn.classList.contains('btn-copy')) {
+    copyResult();
+  } else if (btn.classList.contains('btn-screenshot')) {
+    screenshotResult();
+  } else if (btn.classList.contains('btn-retry')) {
+    retryTest();
+  }
+});
+
+/* ============================================================
+   事件绑定
+   ============================================================ */
+btnStart.addEventListener('click', () => {
+  state.currentQuestion = 0;
+  state.answers = {};
+  state.resultPersonalityId = null;
+
+  // 尝试恢复之前的进度
+  const saved = loadProgress();
+  if (saved && saved.answers && Object.keys(saved.answers).length > 0 && !saved.resultPersonalityId) {
+    // 有未完成的答题
+    if (confirm('检测到上次未完成的答题进度，是否继续？\n（选择"取消"将重新开始）')) {
+      state.currentQuestion = saved.currentQuestion || 0;
+      state.answers = saved.answers || {};
+    }
+  }
+
+  showPage('quiz');
+  renderQuestion('next');
+  updateNavButtons();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+btnNext.addEventListener('click', goNext);
+btnPrev.addEventListener('click', goPrev);
+
+// 键盘支持
+document.addEventListener('keydown', (e) => {
+  if (state.currentPage !== 'quiz') return;
+
+  if (e.key === 'Enter' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    goNext();
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    goPrev();
+  } else if (e.key >= '1' && e.key <= '4') {
+    const idx = parseInt(e.key) - 1;
+    if (idx < QUESTIONS[state.currentQuestion].options.length) {
+      selectOption(idx); // 键盘触发，无鼠标位置粒子
+    }
+  }
+});
+
+/* ============================================================
+   结果页渲染（每次切换到结果页时）
+   ============================================================ */
+const origShowPage = showPage;
+showPage = function(pageName) {
+  origShowPage(pageName);
+  if (pageName === 'result') {
+    renderResultActions();
+  }
+};
+
+function renderResultActions() {
+  // 在最后一个 result-card 后添加操作按钮
+  const lastCard = resultContent.querySelector('.result-card:last-of-type');
+  if (!lastCard) return;
+
+  // 避免重复添加
+  if (resultContent.querySelector('.result-actions')) return;
+
+  const actions = document.createElement('div');
+  actions.className = 'result-actions';
+  actions.innerHTML = `
+    <button class="btn-action btn-retry" type="button">🔄 重新测试</button>
+    <button class="btn-action btn-copy" type="button">📋 复制结果</button>
+    <button class="btn-action btn-screenshot" type="button">📸 截图保存</button>
+  `;
+  lastCard.insertAdjacentElement('afterend', actions);
+}
+
+/* ============================================================
+   📱 PWA 支持 — 可添加到主屏幕
+   ============================================================ */
+(function setupPWA() {
+  // 创建 Manifest 对象
+  const manifest = {
+    name: '色彩人格测试',
+    short_name: '人格测试',
+    description: '发现你的内在颜色 — 趣味专业人格心理测试',
+    start_url: location.href,
+    display: 'standalone',
+    background_color: '#f9f7f4',
+    theme_color: '#9b7ec4',
+    orientation: 'portrait-primary',
+    icons: [{
+      src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#9b7ec4"/><text x="96" y="116" text-anchor="middle" font-size="96" fill="white">🎨</text></svg>'),
+      sizes: '192x192',
+      type: 'image/svg+xml',
+      purpose: 'any maskable'
+    }]
+  };
+
+  const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURL;
+  document.head.appendChild(link);
+
+  // 注册 Service Worker（离线缓存）
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE = 'personality-test-v2';
+      self.addEventListener('install', e => {
+        e.waitUntil(
+          caches.open(CACHE).then(c => c.addAll([self.location.href]))
+        );
+        self.skipWaiting();
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(caches.keys().then(keys =>
+          Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+        ));
+        self.clients.claim();
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(
+          caches.match(e.request).then(r => r || fetch(e.request))
+        );
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swURL = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swURL).catch(() => {
+      // Service Worker 注册失败不影响主功能
+    });
+  }
+})();
+
+/* ============================================================
+   初始化：检查是否有保存的结果
+   ============================================================ */
+(function init() {
+  const saved = loadProgress();
+  if (saved && saved.resultPersonalityId !== null && saved.resultPersonalityId !== undefined) {
+    // 有已完成的结果，直接展示
+    state.resultPersonalityId = saved.resultPersonalityId;
+    state.answers = saved.answers || {};
+    renderResult();
+    showPage('result');
+  }
+  // 否则停留在欢迎页
+})();
+
+/* ============================================================
+   控制台欢迎信息
+   ============================================================ */
+console.log(`
+🎨  色彩人格测试 · 已就绪
+──────────────────────────
+🌈  9 种色彩人格  |  📝  20 道走心题目
+🎵  环境背景音乐  |  🔊  互动音效反馈
+💌  全部文案可自定义  |  📱  手机电脑完美适配
+──────────────────────────
+🔧  修改指南：
+   - 搜索 "🔧" 定位所有可配置项
+   - PERSONALITIES: 修改人格名称/文案/颜色
+   - QUESTIONS: 修改题目/选项/权重
+   - TEST_CONFIG: 修改测试基本设置
+   - :root CSS变量: 修改整体配色
+`);
+</script>
+
+</body>
+</html>
