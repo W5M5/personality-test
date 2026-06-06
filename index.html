@@ -1753,6 +1753,7 @@ body {
   animation: fadeIn .3s ease;
 }
 
+@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -3654,11 +3655,11 @@ function showPaymentModal() {
     return;
   }
 
-  // 检查是否刚从支付页面返回
-  if (sessionStorage.getItem('pending-payment') === typeId.toString()) {
+  // 检查是否刚从支付返回（页面visibility恢复时自动检测）
+  const pendingPay = sessionStorage.getItem('pending-payment');
+  if (pendingPay === typeId.toString()) {
     sessionStorage.removeItem('pending-payment');
-    // 自动解锁
-    doUnlock(typeId);
+    showPaymentProcessing(() => doUnlock(typeId));
     return;
   }
 
@@ -3725,7 +3726,7 @@ function showPaymentModal() {
 
     // 如果是真实URL → 跳转
     if (payUrl.startsWith('http') || payUrl.startsWith('wxp://')) {
-      sessionStorage.setItem('pending-payment', typeId.toString());
+      markPendingPayment(typeId);
       window.location.href = payUrl;
       return;
     }
@@ -3746,7 +3747,8 @@ function showPaymentModal() {
     qrDiv.innerHTML = `
       <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 点击下方二维码放大保存</p>
       <img src="wepay-qr.jpg" alt="微信收款码" class="payment-qr-img" onclick="showQRFullscreen('wepay-qr.jpg')" style="cursor:pointer;">
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 付款</p>
+      <p style="font-size:.75rem;color:#e8873a;margin:6px 0;font-weight:600;">💰 付款金额：<strong style="font-size:1.1rem;">¥2.90</strong> <button onclick="navigator.clipboard.writeText('2.90');showToast('✅ 金额已复制')" style="padding:2px 10px;background:#fff3e8;color:#e8873a;border:1px solid #e8873a;border-radius:12px;font-size:.65rem;cursor:pointer;">📋 复制金额</button></p>
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 输入 2.90 → 付款</p>
       <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
     document.getElementById('btn-wechat-pay').parentNode.appendChild(qrDiv);
@@ -3767,7 +3769,7 @@ function showPaymentModal() {
     const payUrl = PAYMENT_URLS.alipay;
 
     if (payUrl.startsWith('http') || payUrl.startsWith('alipay://')) {
-      sessionStorage.setItem('pending-payment', typeId.toString());
+      markPendingPayment(typeId);
       window.location.href = payUrl;
       return;
     }
@@ -3787,7 +3789,8 @@ function showPaymentModal() {
     qrDiv.innerHTML = `
       <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 点击下方二维码放大保存</p>
       <img src="alipay-qr.jpg" alt="支付宝收款码" class="payment-qr-img" onclick="showQRFullscreen('alipay-qr.jpg')" style="cursor:pointer;">
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 付款</p>
+      <p style="font-size:.75rem;color:#1677ff;margin:6px 0;font-weight:600;">💰 付款金额：<strong style="font-size:1.1rem;">¥2.90</strong> <button onclick="navigator.clipboard.writeText('2.90');showToast('✅ 金额已复制')" style="padding:2px 10px;background:#e8f0fe;color:#1677ff;border:1px solid #1677ff;border-radius:12px;font-size:.65rem;cursor:pointer;">📋 复制金额</button></p>
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 输入 2.90 → 付款</p>
       <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
     document.getElementById('btn-alipay-pay').parentNode.appendChild(qrDiv);
@@ -3808,6 +3811,52 @@ function showPaymentModal() {
 function closePaymentModal() {
   const overlay = document.getElementById('payment-overlay');
   if (overlay) overlay.remove();
+}
+
+// 支付处理中动画
+function showPaymentProcessing(callback) {
+  const overlay = document.createElement('div');
+  overlay.className = 'payment-overlay';
+  overlay.id = 'payment-processing-overlay';
+  overlay.innerHTML = `
+    <div class="payment-modal" style="text-align:center;">
+      <div style="font-size:3rem;animation:gentleBounce 1s ease-in-out infinite;">💳</div>
+      <h3 style="margin:12px 0 4px;">正在验证支付...</h3>
+      <p style="color:var(--text2);font-size:.85rem;">请稍候，系统正在确认你的付款</p>
+      <div style="margin:16px auto;width:40px;height:40px;border:3px solid #e8e5ec;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;"></div>
+      
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.remove();
+    if (callback) callback();
+  }, 2000);
+}
+
+// 页面可见性变化检测（用户从支付App返回时触发）
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    const pendingPay = sessionStorage.getItem('pending-payment');
+    if (pendingPay && state.currentPage !== 'quiz') {
+      // 用户可能刚付完款回来
+      const typeId = parseInt(pendingPay);
+      if (typeId === state.resultPersonalityId) {
+        sessionStorage.removeItem('pending-payment');
+        setTimeout(() => {
+          if (confirm('👋 欢迎回来！是否已完成支付？\\n\\n点「确定」自动解锁深度报告')) {
+            showPaymentProcessing(() => doUnlock(typeId));
+          }
+        }, 500);
+      }
+    }
+  }
+});
+
+// 在支付前设置标记
+function markPendingPayment(typeId) {
+  sessionStorage.setItem('pending-payment', typeId.toString());
 }
 
 // 检测是否在微信内置浏览器
