@@ -1567,6 +1567,31 @@ body {
   transform: scale(1.05);
 }
 
+/* 全屏二维码查看 */
+.qr-fullscreen-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(0,0,0,.85); display: flex;
+  align-items: center; justify-content: center; padding: 30px;
+  animation: fadeIn .2s ease;
+}
+.qr-fullscreen-overlay img {
+  max-width: 90vw; max-height: 70vh;
+  border-radius: 20px; background: #fff; padding: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.qr-fullscreen-close {
+  position: absolute; top: 20px; right: 24px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.2); color: #fff;
+  border: none; font-size: 1.3rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.qr-fullscreen-hint {
+  position: absolute; bottom: 50px; left: 20px; right: 20px;
+  text-align: center; color: rgba(255,255,255,.9);
+  font-size: .85rem; line-height: 1.6;
+}
+
 .payment-unlock-btn {
   display: block;
   width: 100%;
@@ -3460,27 +3485,58 @@ function getBadgeHTML() {
   return `
     <div class="card result-card badge-card" id="badge-section">
       <h3>🏅 你的人格徽章</h3>
-      <p style="color:var(--text2);font-size:.85rem;margin-bottom:8px;">长按保存，设为头像或发朋友圈</p>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:8px;">长按图片保存，设为头像或发朋友圈</p>
       <div class="badge-preview" id="badge-preview" style="background:linear-gradient(135deg,${p.color},${p.color}cc);">
         <span class="badge-icon">${iconMap[id]}</span>
         <span class="badge-title">${p.name} · ${p.traits[0]}者</span>
         <span class="badge-sub">🎨 色彩人格测试认证</span>
       </div>
+      <img id="badge-img" src="" alt="${p.name}人格徽章" style="width:280px;border-radius:20px;display:none;margin:8px auto;box-shadow:0 4px 16px rgba(0,0,0,.1);" crossorigin="anonymous">
       <button class="badge-download-btn" onclick="downloadBadge()">📥 下载徽章图片</button>
+      <p style="font-size:.65rem;color:var(--text-muted);margin-top:4px;">或长按上方徽章图片保存</p>
     </div>
   `;
 }
 
-function downloadBadge() {
+// 自动将徽章 div 转为可长按保存的图片
+function convertBadgeToImage() {
   const el = document.getElementById('badge-preview');
-  if (!el) return;
-  html2canvas(el, { backgroundColor: null, scale: 3 }).then(canvas => {
+  const img = document.getElementById('badge-img');
+  if (!el || !img || typeof html2canvas === 'undefined') return;
+
+  html2canvas(el, { backgroundColor: null, scale: 2 }).then(canvas => {
+    img.src = canvas.toDataURL('image/png');
+    img.style.display = 'block';
+    el.style.display = 'none';
+  }).catch(() => {});
+}
+
+function downloadBadge() {
+  // 优先使用已生成的图片
+  const img = document.getElementById('badge-img');
+  if (img && img.src && img.src.startsWith('data:image')) {
     const link = document.createElement('a');
     link.download = '我的色彩人格徽章.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = img.src;
     link.click();
     showToast('✅ 徽章已保存！');
-  }).catch(() => showToast('⚠️ 请长按徽章截图保存'));
+    return;
+  }
+
+  // 降级：重新渲染
+  const el = document.getElementById('badge-preview');
+  if (!el) return;
+  if (typeof html2canvas !== 'undefined') {
+    html2canvas(el, { backgroundColor: null, scale: 3 }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = '我的色彩人格徽章.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('✅ 徽章已保存！');
+    }).catch(() => showToast('⚠️ 请长按徽章图片保存'));
+  } else {
+    showToast('⚠️ 请长按徽章图片保存');
+  }
 }
 
 /* ============================================================
@@ -3688,11 +3744,9 @@ function showPaymentModal() {
     qrDiv.id = 'qr-fallback';
     qrDiv.style.textAlign = 'center';
     qrDiv.innerHTML = `
-      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 请用微信扫一扫支付 ¥2.9</p>
-      <a href="wepay-qr.jpg" download style="display:inline-block;cursor:pointer;" onclick="event.preventDefault();window.open('wepay-qr.jpg','_blank')">
-        <img src="wepay-qr.jpg" alt="微信收款码 · 长按保存或扫码" class="payment-qr-img">
-      </a>
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">👆 点击放大 · 长按保存到相册</p>
+      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 点击下方二维码放大保存</p>
+      <img src="wepay-qr.jpg" alt="微信收款码" class="payment-qr-img" onclick="showQRFullscreen('wepay-qr.jpg')" style="cursor:pointer;">
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 付款</p>
       <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
     document.getElementById('btn-wechat-pay').parentNode.appendChild(qrDiv);
@@ -3731,11 +3785,9 @@ function showPaymentModal() {
     qrDiv.id = 'qr-fallback';
     qrDiv.style.textAlign = 'center';
     qrDiv.innerHTML = `
-      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 请用支付宝扫一扫支付 ¥2.9</p>
-      <a href="alipay-qr.jpg" download style="display:inline-block;cursor:pointer;" onclick="event.preventDefault();window.open('alipay-qr.jpg','_blank')">
-        <img src="alipay-qr.jpg" alt="支付宝收款码 · 长按保存或扫码" class="payment-qr-img">
-      </a>
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">👆 点击放大 · 长按保存到相册</p>
+      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 点击下方二维码放大保存</p>
+      <img src="alipay-qr.jpg" alt="支付宝收款码" class="payment-qr-img" onclick="showQRFullscreen('alipay-qr.jpg')" style="cursor:pointer;">
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;" class="qr-hint-text">📌 长按二维码 → 识别图中二维码 → 付款</p>
       <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
     document.getElementById('btn-alipay-pay').parentNode.appendChild(qrDiv);
@@ -3756,6 +3808,42 @@ function showPaymentModal() {
 function closePaymentModal() {
   const overlay = document.getElementById('payment-overlay');
   if (overlay) overlay.remove();
+}
+
+// 检测是否在微信内置浏览器
+function isWechatBrowser() {
+  return /micromessenger/i.test(navigator.userAgent);
+}
+
+// 全屏查看二维码（可长按识别）
+function showQRFullscreen(imgSrc) {
+  const isWechat = isWechatBrowser();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'qr-fullscreen-overlay';
+  overlay.id = 'qr-fullscreen-overlay';
+  overlay.innerHTML = `
+    <button class="qr-fullscreen-close" onclick="document.getElementById('qr-fullscreen-overlay').remove()">✕</button>
+    <img src="${imgSrc}" alt="收款二维码">
+    <div class="qr-fullscreen-hint">
+      ${isWechat
+        ? '📌 <strong>长按上方二维码</strong> → 选择「<strong>识别图中二维码</strong>」→ 完成付款'
+        : '📌 <strong>截图保存</strong>上方二维码 → 打开微信/支付宝 → 扫一扫 → <strong>从相册选取</strong>'}
+    </div>
+  `;
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  document.body.appendChild(overlay);
+
+  // 非微信环境更新所有二维码提示
+  if (!isWechat) {
+    document.querySelectorAll('.qr-hint-text').forEach(el => {
+      el.textContent = '👆 点击放大 · 截图后去微信/支付宝扫一扫';
+    });
+  }
 }
 
 // 自动解锁
@@ -4433,6 +4521,8 @@ function renderResult() {
 
   // 渲染雷达图
   setTimeout(() => drawRadarChart(state.resultPersonalityId), 200);
+  // 将徽章转为可长按保存的图片
+  setTimeout(() => convertBadgeToImage(), 500);
 }
 
 /* ============================================================
