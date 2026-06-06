@@ -409,41 +409,67 @@ body {
    答题页样式
    =========================== */
 .quiz-progress-wrap {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .quiz-progress-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: var(--font-sm);
   color: var(--text-secondary);
 }
 
 .quiz-progress-bar {
   width: 100%;
-  height: 6px;
+  height: 8px;
   background: #e8e5ec;
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
+  position: relative;
+}
+
+.quiz-progress-bar::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.3) 50%, transparent 100%);
+  animation: progressShine 2s ease-in-out infinite;
+}
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .quiz-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-light), var(--accent));
-  border-radius: 3px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, #c8b8e0, var(--accent), #7b5ea7);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(155,126,196,.25);
 }
 
 .quiz-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  padding: 32px 24px;
+  padding: 36px 28px 28px;
   box-shadow: var(--shadow-md);
   transition: var(--transition);
-  min-height: 320px;
+  min-height: 340px;
+  position: relative;
+  overflow: hidden;
 }
+
+/* 卡片顶部装饰线 */
+.quiz-card::before {
+  content: '';
+  position: absolute; top: 0; left: 20px; right: 20px;
+  height: 3px; border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, var(--accent-light), var(--accent), var(--accent-light));
+  opacity: .5;
+  transition: opacity .6s ease;
+}
+.quiz-card:hover::before { opacity: .8; }
 
 /* 答题维度标签 */
 .quiz-dim-tag {
@@ -452,15 +478,197 @@ body {
   font-weight: 500;
   color: var(--accent);
   background: var(--accent-light);
-  padding: 2px 10px;
-  border-radius: 10px;
-  margin-left: 8px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-left: 10px;
   vertical-align: middle;
   animation: fadeIn .4s ease;
 }
 
-/* 名人匹配卡片 */
-.celebrity-card {
+/* 问题编号 */
+.quiz-question-number {
+  font-size: var(--font-sm);
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 10px;
+  letter-spacing: 0.06em;
+}
+
+/* 问题文字 */
+.quiz-question-text {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 28px;
+  line-height: 1.5;
+  padding-left: 16px;
+  border-left: 3px solid var(--accent-light);
+}
+
+/* 选项区域 */
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--bg);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 选项左侧装饰点 */
+.quiz-option::before {
+  content: '';
+  position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 3px; border-radius: 0 3px 3px 0;
+  background: transparent;
+  transition: background .3s ease;
+}
+
+.quiz-option:hover {
+  background: #f0edf5;
+  border-color: #e0d8eb;
+  transform: translateX(6px);
+}
+.quiz-option:hover::before {
+  background: var(--accent-light);
+}
+
+.quiz-option:active {
+  transform: scale(0.98);
+}
+
+.quiz-option.selected {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  font-weight: 500;
+  box-shadow: 0 2px 16px rgba(155, 126, 196, 0.18);
+}
+.quiz-option.selected::before {
+  background: var(--accent);
+}
+
+/* 选项图标 */
+.quiz-option-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  transition: var(--transition);
+  width: 32px; text-align: center;
+}
+.quiz-option:hover .quiz-option-icon {
+  transform: scale(1.2) rotate(-5deg);
+}
+.quiz-option.selected .quiz-option-icon {
+  transform: scale(1.15);
+}
+
+/* 选项圆形按钮 */
+.quiz-option-radio {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2.5px solid #d0ccd6;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.quiz-option:hover .quiz-option-radio {
+  border-color: #b5adc4;
+}
+.quiz-option.selected .quiz-option-radio {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.quiz-option.selected .quiz-option-radio::after {
+  content: '✓';
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+/* 选项文字 */
+.quiz-option-text {
+  flex: 1;
+  line-height: 1.45;
+}
+
+/* 题目底部微提示 */
+.quiz-hint {
+  text-align: center;
+  margin-top: 20px;
+  font-size: .75rem;
+  color: var(--text-muted);
+  opacity: .7;
+  font-style: italic;
+}
+
+/* 导航按钮 */
+.quiz-nav {
+  display: flex;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.btn-nav {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: var(--font-base);
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all .3s ease;
+  letter-spacing: 0.04em;
+}
+
+.btn-prev {
+  background: var(--bg);
+  color: var(--text-secondary);
+}
+.btn-prev:hover {
+  background: #e8e5ec;
+  transform: translateX(-3px);
+}
+
+.btn-next {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+  position: relative;
+  overflow: hidden;
+}
+.btn-next::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+}
+.btn-next:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(155, 126, 196, 0.4);
+}
+.btn-next:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.btn-next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
   display: flex;
   gap: 14px;
   align-items: center;
@@ -589,35 +797,6 @@ body {
   font-size: 1.3rem;
   flex-shrink: 0;
   transition: var(--transition);
-}
-
-.quiz-option:hover .quiz-option-icon {
-  transform: scale(1.15);
-}
-
-.quiz-option-radio {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid #d0ccd6;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-.quiz-option.selected .quiz-option-radio {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.quiz-option.selected .quiz-option-radio::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #fff;
 }
 
 .quiz-nav {
@@ -1360,10 +1539,16 @@ body {
 .payment-qr-item { text-align: center; }
 
 .payment-qr-img {
-  width: 120px;
+  width: 140px;
   height: auto;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  -webkit-touch-callout: default;
+  touch-action: auto;
+  cursor: pointer;
+}
+.payment-qr-img:active {
+  transform: scale(1.05);
 }
 
 .payment-unlock-btn {
@@ -1389,6 +1574,51 @@ body {
 }
 
 .payment-unlock-btn:active { transform: scale(.97); }
+
+/* ===========================
+   🔙 老用户返回选择弹窗
+   =========================== */
+.return-overlay {
+  position: fixed; inset: 0; z-index: 380;
+  background: rgba(0,0,0,.5); display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+  animation: fadeIn .3s ease;
+}
+.return-modal {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 32px 24px 24px; max-width: 360px; width: 100%;
+  text-align: center; position: relative;
+  box-shadow: var(--shadow-lg);
+  animation: popUp .4s cubic-bezier(.175,.885,.32,1.275);
+}
+.return-icon { font-size: 3rem; margin-bottom: 8px; }
+.return-modal h3 { font-size: 1.3rem; margin-bottom: 4px; }
+.return-info { color: var(--text2); font-size: .95rem; margin-bottom: 20px; line-height: 1.6; }
+.return-actions { display: flex; flex-direction: column; gap: 10px; }
+.return-btn {
+  width: 100%; padding: 14px 20px; border-radius: 16px; border: none;
+  font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+  letter-spacing: .03em;
+}
+.return-btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff; box-shadow: var(--shadow-btn);
+}
+.return-btn-primary:hover { transform: translateY(-2px); }
+.return-btn-secondary {
+  background: var(--bg); color: var(--text);
+  border: 1.5px solid #e8e5ec;
+}
+.return-btn-secondary:hover { background: #f0edf5; }
+.return-btn:active { transform: scale(.97); }
+.return-close {
+  position: absolute; top: 10px; right: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: none; background: var(--bg); font-size: 1rem;
+  color: var(--text2); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: var(--transition);
+}
+.return-close:hover { background: #e8e5ec; }
 
 /* ===========================
    📋 历史记录弹窗
@@ -1829,13 +2059,21 @@ body {
   }
 
   .quiz-option {
-    padding: 12px 14px;
+    padding: 13px 14px;
     font-size: var(--font-sm);
   }
 
   .quiz-question-text {
     font-size: var(--font-lg);
+    padding-left: 12px;
   }
+
+  .quiz-card {
+    padding: 24px 16px 20px;
+    min-height: 280px;
+  }
+
+  .quiz-hint { font-size: .7rem; }
 
   .result-color-circle {
     width: 80px;
@@ -1909,23 +2147,26 @@ body {
   background: #2a2a40;
   border-color: transparent;
 }
-
 [data-theme="dark"] .quiz-option:hover {
   background: #32324d;
   border-color: #4a4470;
 }
-
 [data-theme="dark"] .quiz-option.selected {
   background: #3a3050;
   border-color: var(--accent);
 }
-
+[data-theme="dark"] .quiz-option-radio {
+  border-color: #4a4470;
+}
+[data-theme="dark"] .quiz-card::before {
+  opacity: .35;
+}
 [data-theme="dark"] .highlight-item {
   background: #242438;
 }
-
 [data-theme="dark"] .quiz-progress-bar {
   background: #2e2e46;
+}
 }
 
 [data-theme="dark"] .btn-prev {
@@ -2609,6 +2850,21 @@ function showPage(pageName) {
   if (floatBtn) {
     floatBtn.style.display = (pageName === 'result') ? 'flex' : 'none';
   }
+
+  // 🎯 动态标题
+  const titles = {
+    welcome: '🎨 色彩人格测试 · 发现你的内在颜色',
+    quiz: '🧭 答题中... 第 ' + (state.currentQuestion + 1) + ' 题',
+    result: state.resultPersonalityId !== null
+      ? '🌟 我是 ' + PERSONALITIES[state.resultPersonalityId].name + ' · 色彩人格测试'
+      : '🎨 色彩人格测试 · 你的结果'
+  };
+  document.title = titles[pageName] || titles.welcome;
+
+  // 🔙 浏览器返回拦截（答题页）
+  if (pageName === 'quiz') {
+    window.history.pushState({ page: 'quiz' }, '', window.location.href);
+  }
 }
 
 /* ============================================================
@@ -3045,6 +3301,21 @@ function getBarnumHTML() {
    替换其中的二维码图片即可使用
    ============================================================ */
 function getPremiumHTML() {
+  // 检查是否已解锁
+  const alreadyUnlocked = localStorage.getItem('premium-unlocked-' + state.resultPersonalityId) === '1';
+
+  if (alreadyUnlocked) {
+    return `
+      <div class="card result-card premium-card" id="premium-section" style="border-color:#07c160;background:linear-gradient(135deg,#f0fef4,#e8f8ec);cursor:pointer;" onclick="window.location.href='report.html?type=${state.resultPersonalityId}'">
+        <h3>✅ 深度报告已解锁</h3>
+        <p style="color:var(--text-secondary);margin-bottom:8px;">你已解锁了完整的深度报告，随时可以查看</p>
+        <div style="text-align:center;">
+          <span class="premium-price-tag" style="background:#07c160;color:#fff;">📖 点击立即查看深度报告</span>
+        </div>
+      </div>
+    `;
+  }
+
   // 生成社交证明数字（基于localStorage累计）
   const totalUnlocks = getTotalUnlocks();
   const todayUnlocks = getTodayUnlocks();
@@ -3108,19 +3379,21 @@ function getTotalUnlocks() {
 
 function getTodayUnlocks() {
   const today = new Date().toDateString();
-  const data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}');
+  let data;
+  try { data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}'); } catch(e) { data = {}; }
   return data[today] || Math.floor(Math.random() * 8) + 3;
 }
 
 // 更新社交证明
 function incrementUnlockStats() {
   const total = (parseInt(localStorage.getItem('premium-total-unlocks') || '0')) + 1;
-  localStorage.setItem('premium-total-unlocks', total.toString());
+  try { localStorage.setItem('premium-total-unlocks', total.toString()); } catch(e) {}
 
   const today = new Date().toDateString();
-  const data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}');
+  let data;
+  try { data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}'); } catch(e) { data = {}; }
   data[today] = (data[today] || Math.floor(Math.random() * 8) + 3) + 1;
-  localStorage.setItem('premium-daily-unlocks', JSON.stringify(data));
+  try { localStorage.setItem('premium-daily-unlocks', JSON.stringify(data)); } catch(e) {}
 }
 
 /* ============================================================
@@ -3379,20 +3652,22 @@ function showPaymentModal() {
     }).catch(() => {});
 
     // 将支付按钮切换为二维码扫码
-    const btnContainer = document.getElementById('btn-wechat-pay').parentNode;
     document.getElementById('btn-wechat-pay').style.display = 'none';
+    document.getElementById('btn-alipay-pay').style.display = 'none';
     document.getElementById('btn-fallback-unlock').parentNode.style.display = 'none';
 
     const qrDiv = document.createElement('div');
     qrDiv.id = 'qr-fallback';
     qrDiv.style.textAlign = 'center';
     qrDiv.innerHTML = `
-      <p style="font-size:.8rem;color:var(--text2);margin:8px 0;">📱 请扫码支付 ¥2.9</p>
-      <img src="wepay-qr.jpg" alt="微信扫码支付" style="width:160px;border-radius:12px;box-shadow:var(--shadow-sm);">
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">备注「色彩」· 付完点下方按钮</p>
-      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:8px;">✅ 已完成支付 · 解锁报告</button>
+      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 请用微信扫一扫支付 ¥2.9</p>
+      <a href="wepay-qr.jpg" download style="display:inline-block;cursor:pointer;" onclick="event.preventDefault();window.open('wepay-qr.jpg','_blank')">
+        <img src="wepay-qr.jpg" alt="微信收款码 · 长按保存或扫码" class="payment-qr-img">
+      </a>
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">👆 点击放大 · 长按保存到相册</p>
+      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
-    btnContainer.appendChild(qrDiv);
+    document.getElementById('btn-wechat-pay').parentNode.appendChild(qrDiv);
 
     document.getElementById('btn-qr-done').addEventListener('click', function() {
       closePaymentModal();
@@ -3428,10 +3703,12 @@ function showPaymentModal() {
     qrDiv.id = 'qr-fallback';
     qrDiv.style.textAlign = 'center';
     qrDiv.innerHTML = `
-      <p style="font-size:.8rem;color:var(--text2);margin:8px 0;">📱 请用支付宝扫码支付 ¥2.9</p>
-      <img src="alipay-qr.jpg" alt="支付宝扫码支付" style="width:160px;border-radius:12px;box-shadow:var(--shadow-sm);">
-      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">备注「色彩」· 付完点下方按钮</p>
-      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:8px;">✅ 已完成支付 · 解锁报告</button>
+      <p style="font-size:.85rem;color:var(--text2);margin:10px 0;">📱 请用支付宝扫一扫支付 ¥2.9</p>
+      <a href="alipay-qr.jpg" download style="display:inline-block;cursor:pointer;" onclick="event.preventDefault();window.open('alipay-qr.jpg','_blank')">
+        <img src="alipay-qr.jpg" alt="支付宝收款码 · 长按保存或扫码" class="payment-qr-img">
+      </a>
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">👆 点击放大 · 长按保存到相册</p>
+      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:10px;">✅ 已完成支付 · 解锁报告</button>
     `;
     document.getElementById('btn-alipay-pay').parentNode.appendChild(qrDiv);
 
@@ -3526,7 +3803,12 @@ document.addEventListener('click', function(e) {
 /* ============================================================
    ⏰ 限时倒计时
    ============================================================ */
+let countdownTimerId = null;
+
 function startCountdown() {
+  // 清除旧的计时器
+  if (countdownTimerId) { clearInterval(countdownTimerId); countdownTimerId = null; }
+
   const el = document.getElementById('countdown-timer');
   if (!el) return;
 
@@ -3537,6 +3819,7 @@ function startCountdown() {
     const diff = midnight - now;
     if (diff <= 0) {
       el.textContent = '已恢复 ¥9.9';
+      if (countdownTimerId) { clearInterval(countdownTimerId); countdownTimerId = null; }
       return;
     }
     const h = Math.floor(diff / 3600000);
@@ -3545,7 +3828,7 @@ function startCountdown() {
     el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
   update();
-  setInterval(update, 1000);
+  countdownTimerId = setInterval(update, 1000);
 }
 
 // 在 renderResult 渲染后启动倒计时
@@ -3843,6 +4126,10 @@ function renderOptions() {
   // 每个位置的默认图标
   const positionIcons = ['🌟', '💭', '🌿', '🚀'];
 
+  // 随机微提示
+  const hints = ['💭 跟着直觉走，没有对错', '✨ 选最贴近真实感受的那个', '🌿 深呼吸，相信第一反应', '🕊 每个答案都是对的', '🌟 你的感受就是标准答案'];
+  const hint = hints[state.currentQuestion % hints.length];
+
   quizOptions.innerHTML = q.options.map((opt, i) => {
     const isSelected = (selectedIdx === i);
     const icon = opt.icon || positionIcons[i % positionIcons.length];
@@ -3855,7 +4142,7 @@ function renderOptions() {
         <span class="quiz-option-text">${opt.text}</span>
       </button>
     `;
-  }).join('');
+  }).join('') + `<p class="quiz-hint">${hint}</p>`;
 
   // 绑定点击事件
   quizOptions.querySelectorAll('.quiz-option').forEach(btn => {
@@ -4550,12 +4837,6 @@ $('#share-guide-overlay').addEventListener('click', (e) => {
   if (e.target === $('#share-guide-overlay')) hideShareGuide();
 });
 
-// 浮动分享按钮点击
-const shareFloatBtn = $('#share-float-btn');
-if (shareFloatBtn) {
-  shareFloatBtn.addEventListener('click', showShareGuide);
-}
-
 /* ============================================================
    📱 PWA 支持 — 可添加到主屏幕
    ============================================================ */
@@ -4619,25 +4900,217 @@ if (shareFloatBtn) {
    初始化：检查是否有保存的结果
    ============================================================ */
 (function init() {
-  const saved = loadProgress();
+  // 始终先显示欢迎页
+  updateHistoryButton();
 
-  // 判断用户状态
-  if (saved && saved.resultPersonalityId !== null && saved.resultPersonalityId !== undefined) {
-    // 有已完成的结果 → 恢复结果页
+  // 检测是否有已完成的结果或未完成的进度
+  const saved = loadProgress();
+  const hasCompletedResult = saved && saved.resultPersonalityId !== null && saved.resultPersonalityId !== undefined;
+
+  if (hasCompletedResult) {
+    // 有已完成结果 → 延迟弹出选择窗口
+    const p = PERSONALITIES[saved.resultPersonalityId];
+    const iconMap = ['☀️','🌊','🌿','🌸','🌙','🔥','✨','🏔️','🌌'];
+    setTimeout(() => {
+      showReturnOptions(saved, p, iconMap);
+    }, 600);
+  }
+})();
+
+// 老用户回来时的选项弹窗
+function showReturnOptions(saved, p, iconMap) {
+  const overlay = document.createElement('div');
+  overlay.className = 'return-overlay';
+  overlay.id = 'return-overlay';
+  overlay.innerHTML = `
+    <div class="return-modal">
+      <div class="return-icon">${iconMap[saved.resultPersonalityId] || '🎨'}</div>
+      <h3>欢迎回来！</h3>
+      <p class="return-info">
+        你上次的测试结果是<br>
+        <strong style="color:${p.color};font-size:1.2rem;">${p.name} · ${p.tagline}</strong>
+      </p>
+      <div class="return-actions">
+        <button class="return-btn return-btn-primary" id="btn-view-last">
+          📋 查看上次结果
+        </button>
+        <button class="return-btn return-btn-secondary" id="btn-new-test">
+          🔄 重新测试
+        </button>
+      </div>
+      <button class="return-close" id="btn-return-close">✕</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // 查看上次结果
+  document.getElementById('btn-view-last').addEventListener('click', () => {
+    overlay.remove();
     state.resultPersonalityId = saved.resultPersonalityId;
     state.answers = saved.answers || {};
     state.fromHistory = false;
     renderResult();
     showPage('result');
-  } else {
-    // 没有已完成结果 → 显示欢迎页
-    updateHistoryButton();
-  }
-})();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 重新测试
+  document.getElementById('btn-new-test').addEventListener('click', () => {
+    overlay.remove();
+    state.currentQuestion = 0;
+    state.answers = {};
+    state.resultPersonalityId = null;
+    state.fromHistory = false;
+    clearProgress();
+    showPage('quiz');
+    renderQuestion('next');
+    updateNavButtons();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 关闭
+  document.getElementById('btn-return-close').addEventListener('click', () => overlay.remove());
+
+  // 点击遮罩关闭
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+}
 
 /* ============================================================
-   控制台欢迎信息
+   🔙 浏览器返回按钮拦截
    ============================================================ */
+window.addEventListener('popstate', function(e) {
+  if (state.currentPage === 'quiz') {
+    const q = QUESTIONS[state.currentQuestion];
+    const answered = state.answers[q.id] !== undefined;
+    if (answered) {
+      const leave = confirm('确定要离开测试吗？\n\n当前进度已自动保存，下次可以继续。');
+      if (leave) {
+        saveProgress();
+        showPage('welcome');
+        updateHistoryButton();
+        window.history.pushState({ page: 'welcome' }, '', window.location.href);
+      } else {
+        window.history.pushState({ page: 'quiz' }, '', window.location.href);
+      }
+    } else {
+      saveProgress();
+      showPage('welcome');
+      updateHistoryButton();
+      window.history.pushState({ page: 'welcome' }, '', window.location.href);
+    }
+  } else if (state.currentPage === 'result') {
+    showPage('welcome');
+    updateHistoryButton();
+    window.history.pushState({ page: 'welcome' }, '', window.location.href);
+  }
+});
+
+/* ============================================================
+   ⚠️ 答题中途关闭/刷新提醒
+   ============================================================ */
+window.addEventListener('beforeunload', function(e) {
+  if (state.currentPage === 'quiz') {
+    const answered = Object.keys(state.answers).length;
+    if (answered > 0) {
+      saveProgress();
+      e.preventDefault();
+      e.returnValue = '进度已自动保存，确定离开吗？';
+      return e.returnValue;
+    }
+  }
+});
+
+/* ============================================================
+   📤 原生分享按钮
+   ============================================================ */
+function nativeShare() {
+  const p = PERSONALITIES[state.resultPersonalityId] || PERSONALITIES[0];
+  const shareData = {
+    title: '🎨 色彩人格测试',
+    text: `我测出来是「${p.name}」——${p.tagline}！你也来测测你的内在颜色？`,
+    url: 'https://w5m5.github.io/personality-test/'
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else {
+    // 降级：复制链接
+    navigator.clipboard.writeText(shareData.url).then(() => {
+      showToast('📋 链接已复制，去分享给朋友吧～');
+    }).catch(() => {
+      prompt('复制这个链接分享给朋友：', shareData.url);
+    });
+  }
+}
+
+// 更新分享浮动按钮为原生分享
+const shareFloatBtn = $('#share-float-btn');
+if (shareFloatBtn) {
+  shareFloatBtn.addEventListener('click', function() {
+    // 优先使用原生分享，不支持则弹引导
+    if (navigator.share) {
+      nativeShare();
+    } else {
+      showShareGuide();
+    }
+  });
+}
+
+/* ============================================================
+   🏠 PWA 安装引导
+   ============================================================ */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // 延迟显示安装提示（等用户测完）
+  setTimeout(function() {
+    if (deferredPrompt && state.currentPage === 'welcome') {
+      showPWAInstallBanner();
+    }
+  }, 8000);
+});
+
+function showPWAInstallBanner() {
+  if (document.getElementById('pwa-banner')) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'pwa-banner';
+  banner.style.cssText = `
+    position:fixed;bottom:20px;left:20px;right:20px;z-index:250;
+    background:var(--bg-card);border-radius:16px;padding:14px 18px;
+    box-shadow:0 8px 32px rgba(0,0,0,.15);display:flex;
+    align-items:center;gap:12px;max-width:420px;margin:0 auto;
+    animation:popUp .4s cubic-bezier(.175,.885,.32,1.275);
+  `;
+  banner.innerHTML = `
+    <span style="font-size:1.6rem;">📲</span>
+    <div style="flex:1;">
+      <div style="font-weight:600;font-size:.9rem;">添加到桌面</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">像 App 一样打开，体验更好</div>
+    </div>
+    <button id="btn-pwa-install" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;font-weight:600;font-size:.8rem;cursor:pointer;white-space:nowrap;">安装</button>
+    <button id="btn-pwa-close" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text-muted);padding:4px;">✕</button>
+  `;
+  document.body.appendChild(banner);
+
+  document.getElementById('btn-pwa-install').addEventListener('click', async function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      banner.remove();
+    }
+  });
+
+  document.getElementById('btn-pwa-close').addEventListener('click', function() {
+    banner.remove();
+  });
+}
 console.log(`
 🎨  色彩人格测试 · 已就绪
 ──────────────────────────
