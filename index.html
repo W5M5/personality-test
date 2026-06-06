@@ -1739,6 +1739,13 @@ body {
 .pm-sub { display: block; font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
 .pm-arrow { font-size: 1.3rem; color: var(--text-muted); flex-shrink: 0; }
 
+/* 微信打开提示 */
+.wechat-open-tip {
+  background: #fff8e8; border: 1px dashed #e8c860;
+  border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
+}
+[data-theme="dark"] .wechat-open-tip { background: #2a2418; border-color: #5a4a20; }
+
 /* ===========================
    分享引导弹窗
    =========================== */
@@ -3684,12 +3691,27 @@ function showPaymentModal() {
         支付完成后回到此页面，报告自动解锁 ✨
       </p>
 
+      <!-- 在微信中打开提示 -->
+      <div class="wechat-open-tip" id="wechat-open-tip" style="display:none;">
+        <p style="font-size:.8rem;color:#e8873a;text-align:center;margin-bottom:8px;">
+          💡 长按二维码付款仅支持微信内打开
+        </p>
+        <button class="payment-method-btn wechat-btn" onclick="copyAndOpenWechat()" style="margin-bottom:6px;">
+          <span class="pm-icon">📋</span>
+          <span class="pm-text">
+            <span class="pm-title">复制链接 · 在微信中打开</span>
+            <span class="pm-sub">粘贴到微信，长按二维码即可付款</span>
+          </span>
+          <span class="pm-arrow">→</span>
+        </button>
+      </div>
+
       <!-- 微信支付按钮 -->
       <a href="#" class="payment-method-btn wechat-btn" id="btn-wechat-pay">
         <span class="pm-icon">💚</span>
         <span class="pm-text">
           <span class="pm-title">微信支付</span>
-          <span class="pm-sub">跳转微信完成支付</span>
+          <span class="pm-sub">长按二维码识别付款</span>
         </span>
         <span class="pm-arrow">→</span>
       </a>
@@ -3699,7 +3721,7 @@ function showPaymentModal() {
         <span class="pm-icon">💙</span>
         <span class="pm-text">
           <span class="pm-title">支付宝</span>
-          <span class="pm-sub">扫码或跳转支付宝完成支付</span>
+          <span class="pm-sub">长按二维码识别付款</span>
         </span>
         <span class="pm-arrow">→</span>
       </a>
@@ -3708,12 +3730,18 @@ function showPaymentModal() {
         💡 无法跳转？<a href="#" id="btn-fallback-unlock" style="color:var(--accent);">点此使用手动验证</a>
       </p>
       <p style="text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:4px;">
-        🔒 解锁后永久有效 · 不满意凭支付截图退款
+        🔒 解锁后永久有效 · 可反复查看
       </p>
     </div>
   `;
   document.body.appendChild(overlay);
   haptic(20);
+
+  // 非微信浏览器 → 显示「在微信中打开」提示
+  if (!isWechatBrowser()) {
+    const tip = document.getElementById('wechat-open-tip');
+    if (tip) tip.style.display = 'block';
+  }
 
   // 绑定微信支付
   document.getElementById('btn-wechat-pay').addEventListener('click', function(e) {
@@ -3857,6 +3885,16 @@ document.addEventListener('visibilitychange', function() {
 // 在支付前设置标记
 function markPendingPayment(typeId) {
   sessionStorage.setItem('pending-payment', typeId.toString());
+}
+
+// 复制链接并在微信中打开
+function copyAndOpenWechat() {
+  const url = 'https://w5m5.github.io/personality-test/';
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('✅ 链接已复制！请打开微信 → 粘贴 → 发送给任意好友 → 点击打开');
+  }).catch(() => {
+    prompt('请复制此链接，在微信中打开：', url);
+  });
 }
 
 // 检测是否在微信内置浏览器
