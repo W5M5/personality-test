@@ -99,6 +99,34 @@ body{
 </div>
 
 <script>
+// ========== 支付验证 ==========
+const params = new URLSearchParams(window.location.search);
+const typeId = parseInt(params.get('type')) || 0;
+
+// 检查是否已解锁
+const unlocked = localStorage.getItem('premium-unlocked-' + typeId);
+if (unlocked !== '1') {
+  // 未解锁 → 显示付费提示
+  document.getElementById('app').innerHTML = `
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;">
+      <div style="font-size:4rem;margin-bottom:16px;">🔒</div>
+      <h2 style="font-size:1.5rem;color:#3a3548;margin-bottom:8px;">此报告需要解锁</h2>
+      <p style="color:#8b8598;margin-bottom:24px;max-width:320px;line-height:1.7;">
+        请先完成色彩人格测试，<br>然后支付 ¥2.9 解锁深度报告
+      </p>
+      <a href="index.html" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#9b7ec4,#7b5ea7);color:#fff;border-radius:50px;text-decoration:none;font-weight:600;font-size:1.1rem;box-shadow:0 4px 16px rgba(155,126,196,.3);">
+        🧭 去做测试 →
+      </a>
+      <p style="color:#b5b0c0;font-size:.8rem;margin-top:20px;">已完成支付？请从测试结果页重新进入</p>
+    </div>
+  `;
+  document.getElementById('hero').style.display = 'none';
+  // 隐藏内容区
+  const style = document.createElement('style');
+  style.textContent = '#content{display:none}';
+  document.head.appendChild(style);
+} else {
+
 // ========== 9种人格深度报告数据 ==========
 const REPORTS = [
   {/* 0 晨曦橙 */
@@ -318,9 +346,7 @@ const REPORTS = [
   }
 ];
 
-// ========== 读取URL参数 ==========
-const params = new URLSearchParams(window.location.search);
-const typeId = parseInt(params.get('type')) || 0;
+// ========== 渲染页面（typeId 已在顶部定义）==========
 const rep = REPORTS[typeId] || REPORTS[0];
 
 // ========== 渲染页面 ==========
@@ -383,6 +409,9 @@ const html = `
       而是为了让你看到自己一直有但从未被承认的光芒。<br>
       你已经足够优秀。现在，带着这份确认，出发吧。"
     </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <a href="index.html" style="display:inline-block;padding:10px 24px;background:var(--accent);color:#fff;border-radius:30px;text-decoration:none;font-weight:600;font-size:.9rem;">🔙 返回测试主页</a>
+    </div>
     <p style="font-size:.85rem;color:var(--text2);">
       📌 本报告永久有效 · 可随时回看<br>
       🎨 色彩人格测试 · 认识自己是一生的浪漫
@@ -391,6 +420,7 @@ const html = `
 `;
 
 document.getElementById('content').innerHTML = html;
+} // 结束 if (unlocked) 块
 </script>
 </body>
 </html>

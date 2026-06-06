@@ -298,6 +298,63 @@ body {
   color: var(--text-muted);
 }
 
+/* 欢迎页历史记录 */
+.welcome-history {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.welcome-history-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1.5px solid #e8e5ec;
+  border-radius: 50px;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+}
+.welcome-history-btn:hover {
+  background: #f0edf5;
+  border-color: #d5d0dc;
+  transform: translateY(-1px);
+}
+.welcome-history-btn:active { transform: scale(0.97); }
+
+/* 继续上次测试按钮 */
+.welcome-resume {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.welcome-resume-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--accent-light), #f0e8f8);
+  color: var(--accent-dark);
+  border: 1.5px solid var(--accent);
+  border-radius: 50px;
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+  animation: gentlePulse 2.5s ease-in-out infinite;
+}
+@keyframes gentlePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(155, 126, 196, 0.2); }
+  50% { box-shadow: 0 0 0 10px rgba(155, 126, 196, 0); }
+}
+.welcome-resume-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(155, 126, 196, 0.25);
+}
+.welcome-resume-btn:active { transform: scale(0.97); }
+.resume-info { font-size: .75rem; opacity: .7; font-weight: 400; }
+
 /* 欢迎页分享区 */
 .welcome-share {
   margin-top: 20px;
@@ -1333,6 +1390,54 @@ body {
 
 .payment-unlock-btn:active { transform: scale(.97); }
 
+/* ===========================
+   📋 历史记录弹窗
+   =========================== */
+.history-overlay {
+  position: fixed; inset: 0; z-index: 350;
+  background: rgba(0,0,0,.5); display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+  animation: fadeIn .25s ease;
+}
+.history-modal {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 24px 18px; max-width: 440px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: popUp .3s cubic-bezier(.175,.885,.32,1.275);
+}
+.history-modal h3 { font-size: 1.2rem; text-align: center; margin-bottom: 4px; }
+.history-modal .hm-sub { font-size: .8rem; color: var(--text-muted); text-align: center; margin-bottom: 14px; }
+.history-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: var(--radius-md); cursor: pointer; transition: var(--transition);
+  margin-bottom: 8px; background: var(--bg);
+}
+.history-item:hover { transform: translateX(4px); background: #f0edf5; }
+[data-theme="dark"] .history-item:hover { background: #2e2e46; }
+.history-dot {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: #fff; font-weight: 700;
+}
+.history-info { flex: 1; min-width: 0; }
+.history-info .hi-name { font-weight: 600; font-size: .95rem; }
+.history-info .hi-date { font-size: .75rem; color: var(--text-muted); }
+.history-delete {
+  width: 28px; height: 28px; border-radius: 50%; border: none;
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  font-size: .9rem; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition); flex-shrink: 0;
+}
+.history-delete:hover { background: #fee; color: #e74c3c; }
+.history-empty { text-align: center; padding: 30px 0; color: var(--text-muted); }
+.history-modal .hm-close {
+  display: block; width: 100%; padding: 10px; margin-top: 8px;
+  background: var(--bg); border: none; border-radius: var(--radius-md);
+  font-size: .9rem; color: var(--text2); cursor: pointer; transition: var(--transition);
+}
+.history-modal .hm-close:hover { background: #e8e5ec; }
+
 /* 支付方式选择按钮 */
 .payment-method-btn {
   display: flex; align-items: center; gap: 14px; padding: 16px 18px;
@@ -1981,6 +2086,18 @@ body {
       开始测试 ✦
     </button>
 
+    <div class="welcome-resume anim-5" id="welcome-resume" style="display:none;">
+      <button class="welcome-resume-btn" id="btn-resume" onclick="resumeTest()">
+        📝 继续上次测试 <span class="resume-info"></span>
+      </button>
+    </div>
+
+    <div class="welcome-history anim-5" id="welcome-history" style="display:none;">
+      <button class="welcome-history-btn" id="btn-history" onclick="showHistory()">
+        📋 查看测试记录
+      </button>
+    </div>
+
     <footer class="welcome-footer">
       <p>🕊 深呼吸，跟随直觉作答就好</p>
       <div class="welcome-share">
@@ -2052,6 +2169,7 @@ const TEST_CONFIG = {
 // 支付宝：打开支付宝 → 收钱 → 保存收款码 → 用工具转成链接
 const PAYMENT_URLS = {
   wechat: '#付款:(W5M2005)/深度报告收款/001',
+  alipay: '#收款:深度报告/001',
 };
 
 // 音效：默认关闭
@@ -3175,7 +3293,7 @@ function showPaymentModal() {
 
   // 已解锁 → 直接查看
   if (localStorage.getItem('premium-unlocked-' + typeId) === '1') {
-    window.open('report.html?type=' + typeId, '_blank');
+    window.location.href = 'report.html?type=' + typeId;
     return;
   }
 
@@ -3218,6 +3336,16 @@ function showPaymentModal() {
         <span class="pm-arrow">→</span>
       </a>
 
+      <!-- 支付宝按钮 -->
+      <a href="#" class="payment-method-btn alipay-btn" id="btn-alipay-pay">
+        <span class="pm-icon">💙</span>
+        <span class="pm-text">
+          <span class="pm-title">支付宝</span>
+          <span class="pm-sub">扫码或跳转支付宝完成支付</span>
+        </span>
+        <span class="pm-arrow">→</span>
+      </a>
+
       <p style="text-align:center;font-size:.65rem;color:var(--text-muted);margin-top:12px;">
         💡 无法跳转？<a href="#" id="btn-fallback-unlock" style="color:var(--accent);">点此使用手动验证</a>
       </p>
@@ -3232,8 +3360,85 @@ function showPaymentModal() {
   // 绑定微信支付
   document.getElementById('btn-wechat-pay').addEventListener('click', function(e) {
     e.preventDefault();
-    sessionStorage.setItem('pending-payment', typeId.toString());
-    window.location.href = PAYMENT_URLS.wechat;
+    // 清除之前的二维码
+    const oldQr = document.getElementById('qr-fallback');
+    if (oldQr) oldQr.remove();
+
+    const payUrl = PAYMENT_URLS.wechat;
+
+    // 如果是真实URL → 跳转
+    if (payUrl.startsWith('http') || payUrl.startsWith('wxp://')) {
+      sessionStorage.setItem('pending-payment', typeId.toString());
+      window.location.href = payUrl;
+      return;
+    }
+
+    // 如果是 # 开头或非标准URL → 复制付款信息 + 弹二维码扫码
+    navigator.clipboard.writeText(payUrl.replace(/^#/, '')).then(() => {
+      showToast('✅ 付款信息已复制，请在微信中粘贴发送');
+    }).catch(() => {});
+
+    // 将支付按钮切换为二维码扫码
+    const btnContainer = document.getElementById('btn-wechat-pay').parentNode;
+    document.getElementById('btn-wechat-pay').style.display = 'none';
+    document.getElementById('btn-fallback-unlock').parentNode.style.display = 'none';
+
+    const qrDiv = document.createElement('div');
+    qrDiv.id = 'qr-fallback';
+    qrDiv.style.textAlign = 'center';
+    qrDiv.innerHTML = `
+      <p style="font-size:.8rem;color:var(--text2);margin:8px 0;">📱 请扫码支付 ¥2.9</p>
+      <img src="wepay-qr.jpg" alt="微信扫码支付" style="width:160px;border-radius:12px;box-shadow:var(--shadow-sm);">
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">备注「色彩」· 付完点下方按钮</p>
+      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:8px;">✅ 已完成支付 · 解锁报告</button>
+    `;
+    btnContainer.appendChild(qrDiv);
+
+    document.getElementById('btn-qr-done').addEventListener('click', function() {
+      closePaymentModal();
+      showManualVerify(typeId);
+    });
+  });
+
+  // 绑定支付宝
+  document.getElementById('btn-alipay-pay').addEventListener('click', function(e) {
+    e.preventDefault();
+    // 清除之前的二维码
+    const oldQr = document.getElementById('qr-fallback');
+    if (oldQr) oldQr.remove();
+
+    const payUrl = PAYMENT_URLS.alipay;
+
+    if (payUrl.startsWith('http') || payUrl.startsWith('alipay://')) {
+      sessionStorage.setItem('pending-payment', typeId.toString());
+      window.location.href = payUrl;
+      return;
+    }
+
+    // 非标准URL → 复制 + 弹支付宝收款码
+    navigator.clipboard.writeText(payUrl.replace(/^#/, '')).then(() => {
+      showToast('✅ 付款信息已复制，请在支付宝中粘贴');
+    }).catch(() => {});
+
+    document.getElementById('btn-wechat-pay').style.display = 'none';
+    document.getElementById('btn-alipay-pay').style.display = 'none';
+    document.getElementById('btn-fallback-unlock').parentNode.style.display = 'none';
+
+    const qrDiv = document.createElement('div');
+    qrDiv.id = 'qr-fallback';
+    qrDiv.style.textAlign = 'center';
+    qrDiv.innerHTML = `
+      <p style="font-size:.8rem;color:var(--text2);margin:8px 0;">📱 请用支付宝扫码支付 ¥2.9</p>
+      <img src="alipay-qr.jpg" alt="支付宝扫码支付" style="width:160px;border-radius:12px;box-shadow:var(--shadow-sm);">
+      <p style="font-size:.7rem;color:var(--text-muted);margin:6px 0;">备注「色彩」· 付完点下方按钮</p>
+      <button class="payment-unlock-btn" id="btn-qr-done" style="margin-top:8px;">✅ 已完成支付 · 解锁报告</button>
+    `;
+    document.getElementById('btn-alipay-pay').parentNode.appendChild(qrDiv);
+
+    document.getElementById('btn-qr-done').addEventListener('click', function() {
+      closePaymentModal();
+      showManualVerify(typeId);
+    });
   });
 
   // 手动验证降级
@@ -3298,7 +3503,7 @@ function showBragCard(typeId) {
       <span class="brag-tag" style="background:${p.color};">${iconMap[typeId]} ${p.name} · ${p.traits[0]}者</span>
       <p style="font-size:.8rem;color:var(--text2);margin:10px 0;">📸 截这张图发朋友圈<br>看看谁和你同色！</p>
       <div class="brag-btns">
-        <button class="brag-view" onclick="closeBragCard();window.open('report.html?type=${typeId}','_blank')">📖 查看深度报告</button>
+        <button class="brag-view" onclick="closeBragCard();window.location.href='report.html?type=${typeId}'">📖 查看深度报告</button>
         <button class="brag-share" onclick="closeBragCard()">📤 炫耀完毕</button>
       </div>
       <p class="brag-url">w5m5.github.io/personality-test</p>
@@ -3312,6 +3517,11 @@ function closeBragCard() {
   const overlay = document.getElementById('brag-overlay');
   if (overlay) overlay.remove();
 }
+
+// 炫耀卡点击外部关闭
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'brag-overlay') closeBragCard();
+});
 
 /* ============================================================
    ⏰ 限时倒计时
@@ -3377,6 +3587,206 @@ function loadProgress() {
 
 function clearProgress() {
   localStorage.removeItem('personality-test-progress');
+}
+
+function resumeTest() {
+  const saved = loadProgress();
+  if (!saved || !saved.answers || Object.keys(saved.answers).length === 0) {
+    showToast('⚠️ 没有找到可继续的测试记录');
+    return;
+  }
+  state.currentQuestion = saved.currentQuestion || 0;
+  state.answers = saved.answers || {};
+  state.resultPersonalityId = null;
+  state.fromHistory = false;
+  showPage('quiz');
+  renderQuestion('next');
+  updateNavButtons();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================================
+   📋 测试历史记录
+   ============================================================ */
+function saveToHistory(personalityId, answers) {
+  const history = getHistory();
+  const p = PERSONALITIES[personalityId];
+  history.unshift({
+    id: Date.now(),
+    timestamp: new Date().toLocaleString('zh-CN'),
+    personalityId: personalityId,
+    name: p.name,
+    color: p.color,
+    tagline: p.tagline,
+    answers: { ...answers }
+  });
+  // 最多保留 20 条
+  if (history.length > 20) history.length = 20;
+  localStorage.setItem('personality-test-history', JSON.stringify(history));
+}
+
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem('personality-test-history')) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function deleteHistoryEntry(id) {
+  let history = getHistory();
+  history = history.filter(h => h.id !== id);
+  localStorage.setItem('personality-test-history', JSON.stringify(history));
+}
+
+function showHistory() {
+  const history = getHistory();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'history-overlay';
+  overlay.id = 'history-overlay';
+  overlay.innerHTML = `
+    <div class="history-modal">
+      <h3>📋 测试记录</h3>
+      <p class="hm-sub">共 ${history.length} 次测试</p>
+      ${history.length === 0 ? `
+        <div class="history-empty">还没有测试记录<br>快去测一次吧 ✨</div>
+      ` : history.map(h => `
+        <div class="history-item" data-id="${h.id}">
+          <div class="history-dot" style="background:${h.color};" onclick="viewHistoryResult(${h.id})">${h.name.charAt(0)}</div>
+          <div class="history-info" onclick="viewHistoryResult(${h.id})">
+            <div class="hi-name">${h.name} · ${h.tagline}</div>
+            <div class="hi-date">${h.timestamp}</div>
+          </div>
+          <button class="history-delete" onclick="event.stopPropagation();deleteHistoryById(${h.id})" title="删除">🗑</button>
+        </div>
+      `).join('')}
+      <button class="hm-close" onclick="document.getElementById('history-overlay').remove()">关闭</button>
+    </div>
+  `;
+
+  // 点击遮罩关闭
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  document.body.appendChild(overlay);
+}
+
+function deleteHistoryById(id) {
+  if (confirm('确定删除这条测试记录吗？')) {
+    deleteHistoryEntry(id);
+    // 刷新弹窗
+    const overlay = document.getElementById('history-overlay');
+    if (overlay) overlay.remove();
+    showHistory();
+    updateHistoryButton();
+    showToast('🗑 记录已删除');
+  }
+}
+
+function viewHistoryResult(id) {
+  const history = getHistory();
+  const entry = history.find(h => h.id === id);
+  if (!entry) return;
+
+  // 关闭历史弹窗
+  const overlay = document.getElementById('history-overlay');
+  if (overlay) overlay.remove();
+
+  // 加载历史结果
+  state.resultPersonalityId = entry.personalityId;
+  state.answers = entry.answers || {};
+  state.fromHistory = true;
+  state.currentPage = 'result';
+
+  renderResult();
+  showPage('result');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // 结果页显示返回标记
+  setTimeout(() => addHistoryBackButton(), 400);
+}
+
+let historyBackBtnAdded = false;
+
+function addHistoryBackButton() {
+  if (historyBackBtnAdded) return;
+  const actionsDiv = resultContent.querySelector('.result-actions');
+  if (!actionsDiv || resultContent.querySelector('.btn-history-back')) return;
+
+  historyBackBtnAdded = true;
+  const backBtn = document.createElement('button');
+  backBtn.className = 'btn-action btn-retry btn-history-back';
+  backBtn.textContent = '📋 返回记录';
+  backBtn.style.background = '#f0edf5';
+  backBtn.addEventListener('click', () => {
+    historyBackBtnAdded = false;
+    showPage('welcome');
+    updateHistoryButton();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => showHistory(), 300);
+  });
+  actionsDiv.insertBefore(backBtn, actionsDiv.firstChild);
+}
+
+function updateHistoryButton() {
+  const history = getHistory();
+  const hasHistory = history.length > 0;
+
+  // 检查是否有未完成的测试
+  const saved = loadProgress();
+  const hasUnfinished = saved && saved.answers && Object.keys(saved.answers).length > 0 && !saved.resultPersonalityId;
+  const unfinishedQuestion = hasUnfinished ? (saved.currentQuestion || 0) + 1 : 0;
+
+  // 显示/隐藏历史按钮
+  const el = document.getElementById('welcome-history');
+  if (el) {
+    el.style.display = hasHistory ? 'block' : 'none';
+  }
+
+  // 处理未完成测试的继续按钮
+  const resumeEl = document.getElementById('welcome-resume');
+  if (resumeEl) {
+    if (hasUnfinished) {
+      resumeEl.style.display = 'block';
+      resumeEl.querySelector('.resume-info').textContent = `上次做到第 ${unfinishedQuestion} / 20 题`;
+    } else {
+      resumeEl.style.display = 'none';
+    }
+  }
+
+  // 根据用户状态切换主按钮和副标题
+  const btn = $('#btn-start');
+  const subtitle = document.querySelector('.welcome-subtitle');
+
+  if (hasUnfinished && !hasHistory) {
+    // 仅有未完成测试
+    if (btn) btn.innerHTML = '重新开始 ✦';
+    if (subtitle) subtitle.innerHTML = '检测到上次未完成的测试，<br>要继续还是重新开始？';
+  } else if (hasUnfinished && hasHistory) {
+    // 既有未完成又有历史
+    if (btn) btn.innerHTML = '重新测试 ✦';
+    if (subtitle) subtitle.innerHTML = '欢迎回来！<br>上次的测试还没做完，要继续吗？';
+  } else if (!hasUnfinished && hasHistory) {
+    // 仅有历史
+    if (btn) btn.innerHTML = '重新测试 ✦';
+    if (subtitle) subtitle.innerHTML = '欢迎回来！<br>上次的结果还在，要再看看吗？';
+  } else {
+    // 全新用户
+    if (btn) btn.innerHTML = '开始测试 ✦';
+    if (subtitle) subtitle.innerHTML = '每个人心中都住着一种颜色，<br>它悄悄定义了你与世界相处的方式。';
+  }
+
+  if (btn) {
+    btn.setAttribute('data-has-history', hasHistory ? 'true' : 'false');
+    btn.setAttribute('data-has-unfinished', hasUnfinished ? 'true' : 'false');
+  }
+}
+
+// 当前用户是否有测试记录
+function hasTestHistory() {
+  return getHistory().length > 0;
 }
 
 /* ============================================================
@@ -3576,7 +3986,9 @@ function computeResult() {
   });
 
   state.resultPersonalityId = maxIdx;
+  state.fromHistory = false;
   saveProgress();
+  saveToHistory(maxIdx, state.answers); // 保存到历史记录
   recordCompletion(maxIdx); // 记录统计数据
 
   // 🎬 先播放揭晓动画，动画结束后渲染结果
@@ -3650,6 +4062,10 @@ function isLightColor(hex) {
    渲染结果页
    ============================================================ */
 function renderResult() {
+  // 重置历史按钮标记（正常结果重新渲染）
+  if (!state.fromHistory) {
+    historyBackBtnAdded = false;
+  }
   const p = PERSONALITIES[state.resultPersonalityId];
 
   resultContent.innerHTML = `
@@ -3955,8 +4371,12 @@ function retryTest() {
   state.currentQuestion = 0;
   state.answers = {};
   state.resultPersonalityId = null;
+  state.fromHistory = true; // 标记从结果页来，不弹确认框
   clearProgress();
   showPage('welcome');
+  updateHistoryButton();
+  // 重置 fromHistory
+  setTimeout(() => { state.fromHistory = false; }, 500);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -3978,20 +4398,61 @@ resultContent.addEventListener('click', (e) => {
    事件绑定
    ============================================================ */
 btnStart.addEventListener('click', () => {
-  state.currentQuestion = 0;
-  state.answers = {};
-  state.resultPersonalityId = null;
-
-  // 尝试恢复之前的进度
+  // 检查未完成测试
   const saved = loadProgress();
-  if (saved && saved.answers && Object.keys(saved.answers).length > 0 && !saved.resultPersonalityId) {
-    // 有未完成的答题
-    if (confirm('检测到上次未完成的答题进度，是否继续？\n（选择"取消"将重新开始）')) {
-      state.currentQuestion = saved.currentQuestion || 0;
-      state.answers = saved.answers || {};
+  const hasUnfinished = saved && saved.answers && Object.keys(saved.answers).length > 0 && !saved.resultPersonalityId;
+
+  if (hasUnfinished && !state.fromHistory) {
+    // 有未完成 → 让用户选：继续 or 重新开始 or 看历史
+    const choice = confirm(
+      '📝 检测到上次未完成的测试\n\n' +
+      '点「确定」→ 重新开始（丢弃旧进度）\n' +
+      '点「取消」→ 继续上次测试'
+    );
+    if (choice) {
+      // 确定 = 重新开始
+      state.currentQuestion = 0;
+      state.answers = {};
+      state.resultPersonalityId = null;
+      state.fromHistory = false;
+      clearProgress();
+    } else {
+      // 取消 = 继续上次
+      resumeTest();
+      return;
     }
+  } else if (hasTestHistory() && !state.fromHistory && !hasUnfinished) {
+    // 有已完成历史但没有未完成 → 提供选择
+    const choice = confirm(
+      '📋 检测到你之前做过测试\n\n' +
+      '点「确定」→ 开始全新测试\n' +
+      '点「取消」→ 查看历史记录'
+    );
+    if (!choice) {
+      showHistory();
+      return;
+    }
+    state.currentQuestion = 0;
+    state.answers = {};
+    state.resultPersonalityId = null;
+    state.fromHistory = false;
+    clearProgress();
+  } else if (!hasUnfinished && !hasTestHistory()) {
+    // 全新用户
+    state.currentQuestion = 0;
+    state.answers = {};
+    state.resultPersonalityId = null;
+    state.fromHistory = false;
+  } else {
+    // 其他情况（如从结果页来）
+    state.currentQuestion = 0;
+    state.answers = {};
+    state.resultPersonalityId = null;
+    state.fromHistory = false;
+    clearProgress();
   }
 
+  updateHistoryButton();
   showPage('quiz');
   renderQuestion('next');
   updateNavButtons();
@@ -4159,14 +4620,19 @@ if (shareFloatBtn) {
    ============================================================ */
 (function init() {
   const saved = loadProgress();
+
+  // 判断用户状态
   if (saved && saved.resultPersonalityId !== null && saved.resultPersonalityId !== undefined) {
-    // 有已完成的结果，直接展示
+    // 有已完成的结果 → 恢复结果页
     state.resultPersonalityId = saved.resultPersonalityId;
     state.answers = saved.answers || {};
+    state.fromHistory = false;
     renderResult();
     showPage('result');
+  } else {
+    // 没有已完成结果 → 显示欢迎页
+    updateHistoryButton();
   }
-  // 否则停留在欢迎页
 })();
 
 /* ============================================================
