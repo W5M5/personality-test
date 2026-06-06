@@ -1197,6 +1197,22 @@ body {
   height: 100%;
 }
 
+/* 回到顶部按钮 */
+.back-to-top {
+  position: fixed; bottom: 100px; right: 24px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg-card); border: 1.5px solid #e8e5ec;
+  box-shadow: var(--shadow-sm); cursor: pointer; z-index: 99;
+  font-size: 1rem; display: none; align-items: center; justify-content: center;
+  transition: var(--transition); opacity: .8;
+}
+.back-to-top:hover { opacity: 1; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.back-to-top:active { transform: scale(.92); }
+
+@media (max-width: 480px) {
+  .back-to-top { bottom: 70px; right: 16px; width: 34px; height: 34px; font-size: .85rem; }
+}
+
 /* ===========================
    分享名片（隐藏元素，截图用）
    =========================== */
@@ -2287,6 +2303,7 @@ body {
 
 <!-- 分享浮动按钮 -->
 <button class="share-float-btn" id="share-float-btn" title="分享给朋友" style="display:none;">📤</button>
+<button class="back-to-top" id="back-to-top" title="回到顶部" style="display:none;">⬆</button>
 
 <!-- ===========================
   分享名片（隐藏，截图时使用）
@@ -2849,6 +2866,17 @@ function showPage(pageName) {
   const floatBtn = $('#share-float-btn');
   if (floatBtn) {
     floatBtn.style.display = (pageName === 'result') ? 'flex' : 'none';
+  }
+
+  // 离开结果页时清除倒计时
+  if (pageName !== 'result' && countdownTimerId) {
+    clearInterval(countdownTimerId);
+    countdownTimerId = null;
+  }
+
+  // 离开结果页时重置历史按钮标记
+  if (pageName !== 'result') {
+    historyBackBtnAdded = false;
   }
 
   // 🎯 动态标题
@@ -4775,6 +4803,7 @@ showPage = function(pageName) {
   origShowPage(pageName);
   if (pageName === 'result') {
     renderResultActions();
+	    setTimeout(celebrateResult, 800);
   }
 };
 
@@ -4895,6 +4924,39 @@ $('#share-guide-overlay').addEventListener('click', (e) => {
     });
   }
 })();
+
+/* ============================================================
+   ⬆ 回到顶部按钮
+   ============================================================ */
+const backToTopBtn = document.getElementById('back-to-top');
+if (backToTopBtn) {
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 500 && state.currentPage === 'result') {
+      backToTopBtn.style.display = 'flex';
+    } else {
+      backToTopBtn.style.display = 'none';
+    }
+  });
+  backToTopBtn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    haptic(10);
+  });
+}
+
+/* ============================================================
+   🎉 结果页庆祝粒子
+   ============================================================ */
+function celebrateResult() {
+  const colors = ['#9b7ec4','#f4a460','#5eab8a','#e8a0bf','#5b7db1','#c75b5b','#f5c842'];
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 3;
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      spawnParticles(cx + (Math.random()-0.5)*200, cy + (Math.random()-0.5)*100, color, 25);
+    }, i * 200);
+  }
+}
 
 /* ============================================================
    初始化：检查是否有保存的结果
