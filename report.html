@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度性格报告 · 色彩人格测试</title>
+<style>
+:root{
+  --bg:#f9f7f4;--card:#fff;--text:#3a3548;--text2:#8b8598;--accent:#9b7ec4;
+  --shadow:0 4px 24px rgba(60,40,80,.08);--radius:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.8;-webkit-font-smoothing:antialiased;
+}
+
+.hero{
+  min-height:50vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:40px 24px;position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;opacity:.3;
+  background:radial-gradient(circle at 30% 40%,rgba(244,164,96,.2),transparent 50%),
+             radial-gradient(circle at 70% 60%,rgba(155,126,196,.2),transparent 50%);
+}
+.hero-badge{
+  font-size:.85rem;font-weight:600;padding:6px 18px;border-radius:20px;
+  background:rgba(255,255,255,.8);color:var(--text2);position:relative;margin-bottom:16px;
+}
+.hero-color-circle{
+  width:100px;height:100px;border-radius:50%;position:relative;margin-bottom:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.15);
+}
+.hero h1{font-size:2.2rem;font-weight:700;position:relative;letter-spacing:.05em}
+.hero .tagline{font-size:1.1rem;color:var(--text2);position:relative}
+.hero .meta{font-size:.8rem;color:#b5b0c0;margin-top:24px;position:relative}
+
+.container{max-width:620px;margin:0 auto;padding:0 20px 60px}
+.section{
+  background:var(--card);border-radius:var(--radius);padding:28px 22px;
+  box-shadow:var(--shadow);margin-bottom:18px;
+}
+.section h2{font-size:1.3rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section h3{font-size:1.05rem;margin:14px 0 8px;color:var(--text)}
+.section p{color:var(--text2);margin-bottom:10px}
+.section ul,.section ol{padding-left:20px;color:var(--text2)}
+.section li{margin-bottom:6px}
+
+.insight-box{
+  background:linear-gradient(135deg,#fdf8f3,#f8f4fd);border-radius:var(--radius);
+  padding:20px 18px;margin:14px 0;border-left:4px solid var(--accent);
+}
+.insight-box p{font-size:.95rem;font-style:italic;color:#7b6e90}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tag{
+  padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:500;
+}
+
+.highlight-num{font-size:2rem;font-weight:700;line-height:1}
+.highlight-group{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.highlight-item{
+  flex:1 1 100px;text-align:center;padding:16px 10px;
+  background:var(--bg);border-radius:var(--radius);
+}
+
+.quote{
+  text-align:center;font-size:1.05rem;font-style:italic;color:#7b6e90;
+  padding:20px;margin:16px 0;
+}
+
+.footer-bar{
+  text-align:center;padding:24px 20px 40px;color:var(--text2);font-size:.8rem;
+}
+
+@media(max-width:480px){
+  .hero h1{font-size:1.7rem}
+  .section{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="hero" id="hero">
+    <div class="hero-badge">🔓 深度性格报告</div>
+    <div class="hero-color-circle" id="hero-circle"></div>
+    <h1 id="hero-name"></h1>
+    <p class="tagline" id="hero-tagline"></p>
+    <div class="meta">色彩人格测试 · 专属于你的深度解读</div>
+  </div>
+  <main class="container" id="content"></main>
+  <footer class="footer-bar">
+    <p>🎨 色彩人格测试 · 认识自己是一生的浪漫</p>
+  </footer>
+</div>
+
+<script>
+// ========== 9种人格深度报告数据 ==========
+const REPORTS = [
+  {/* 0 晨曦橙 */
+    name:'晨曦橙',color:'#F4A460',colorLight:'#FDF2E8',
+    tagline:'温暖治愈者 · 像清晨第一缕阳光',
+    hiddenTalents:[
+      {title:'情绪镜像能力',desc:'你拥有一种罕见的天赋：能像镜子一样映射他人的情绪状态。不需要对方开口，你已经感知到了。这种能力在心理咨询、教育、管理等领域是极大的优势。大多数人需要通过训练才能获得这种敏锐度，而你天生就有。'},
+      {title:'场域守护者',desc:'在团队冲突或紧张气氛中，你是那个不知不觉让空气柔和下来的人。这不是软弱——而是你拥有一种弥合裂痕的天然智慧。这种能力在危机调解、团队建设、客户沟通中价值连城。'},
+      {title:'延迟爆发力',desc:'你可能觉得自己不够果断，但你的力量在于「积累」。就像森林积累腐殖质一样，你持续吸收信息、感受和经历，然后在关键时刻爆发出惊人的洞察力。你不需要时刻都在发光——你只需要在对的时机亮出你的温度。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'建立个人边界',detail:'每天练习说一次"不"。从小事开始——不想去的聚会、不需要的帮忙、不合理的请求。记录每次拒绝后的感受。'},
+      {month:'4-6月',goal:'主动表达需求',detail:'每周至少一次，主动告诉身边的人："我需要…"。可以是需要帮助、需要空间、需要陪伴。练习把自己放在第一位。'},
+      {month:'7-9月',goal:'发掘自己的领导力',detail:'尝试带领一个小组或发起一次活动。用你的共情力来领导——你不是靠权威，而是靠温暖凝聚大家。'},      {month:'10-12月',goal:'建立充电习惯',detail:'列出10件能让你快速恢复能量的事情，每周至少做3件。学会区分"消耗型社交"和"滋养型社交"。'}
+    ],
+    lovePattern:'你在感情中倾向于过度付出。你习惯把对方的需求放在最前面，有时甚至忘记了自己的感受。你的吸引模式是"照顾者"——总是不自觉地吸引需要被照顾的人。但这容易让你陷入单向付出的循环。你需要学会问自己："对方有没有同样在意我的感受？"健康的爱是双向的治愈，不是一个人的燃烧。',
+    bestMatch:{name:'深海蓝',desc:'你的温暖治愈正好填满对方的理性孤岛，而对方的深度思考能帮你更清晰地看见自己。你们互补却不冲突，是能走很远的组合。'},
+    careerDeep:[
+      {title:'心理咨询师/治疗师',match:95},
+      {title:'教育工作者/导师',match:92},
+      {title:'社区运营/用户研究员',match:89},
+      {title:'医疗护理/康复师',match:86},
+      {title:'人力资源/员工关怀',match:84}
+    ]
+  },
+  {/* 1 深海蓝 */
+    name:'深海蓝',color:'#5B7DB1',colorLight:'#EDF2F8',
+    tagline:'深邃思考者 · 沉静如深海',
+    hiddenTalents:[
+      {title:'模式识别天才',desc:'你拥有在混乱数据中发现规律的惊人能力。别人看到的是杂乱的信息点，你看到的是隐藏的模式和逻辑链。这种能力在数据分析、科研、投资、编程等领域是无价之宝。你可能觉得"这不是很简单吗"——不，对大多数人来说并不简单。'},
+      {title:'认知冗余度',desc:'你的大脑可以在不同层面同时处理信息。表面在和别人对话，深层在推演另一个问题的解决方案。这种"多线程思考"让你在复杂问题面前保持镇静，而别人已经手忙脚乱。'},
+      {title:'压缩表达能力',desc:'你不需要说很多话。当别人用100个字解释一件事时，你只需要20个字就说清楚了。这是一种高度凝练的思维习惯——你天生擅长抓住核心逻辑，去掉冗余信息。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'行动优先训练',desc:'每天设定一个"3秒决定"：遇到需要决策的事情，只允许自己想3秒就行动。吃什么、穿什么、周末去哪——从小决策开始练习。'},
+      {month:'4-6月',goal:'情绪表达练习',desc:'每周至少一次，用语言表达一个感受："我今天感到…因为…"。不要求完美，只需要说出来。可以写在日记里，也可以告诉一个信任的人。'},
+      {month:'7-9月',goal:'主动分享洞察',desc:'你的思考价值极高，但它们更多停留在你的脑内。尝试把你的分析写成文字分享出来——写一篇思考、录一段播客、在社交媒体上发声。'},
+      {month:'10-12月',goal:'平衡输入与输出',desc:'减少信息输入30%——少看一些分析文章、少听一些深度播客。把这30%的时间用来输出：写作、创作、解决一个实际问题。'}
+    ],
+    lovePattern:'你在感情中需要大量的独立空间。这不是不爱——沉默和距离是你充电的方式。但你的伴侣可能会把你的沉默误解为"不在乎"。你需要学会用对方能理解的方式表达关心——不一定是说话，可以是一个整理好的书架、一顿精心准备的饭。学会在保持独立的同时建立连接，是你爱情成长的关键。',
+    bestMatch:{name:'晨曦橙',desc:'对方温暖而不黏腻的陪伴正好契合你的节奏。你的深度让对方觉得有安全感，对方的温暖让你偶尔卸下理性铠甲。'},
+    careerDeep:[
+      {title:'数据分析师/科学家',match:96},
+      {title:'软件工程师/架构师',match:93},
+      {title:'战略顾问/研究员',match:91},
+      {title:'学术研究者/教授',match:88},
+      {title:'金融分析师/风控',match:85}
+    ]
+  },
+  {/* 2 森林绿 */
+    name:'森林绿',color:'#7D9B76',colorLight:'#F0F5EE',
+    tagline:'平和守护者 · 如森林般包容',
+    hiddenTalents:[
+      {title:'长线价值判断',desc:'你有一种不被短期噪音干扰的判断力。当别人因为一时的热点而躁动时，你看到的是一件事情的长期价值。这种能力在投资、创业、教育、艺术创作领域都是稀缺品质。你不追求快，但你追求稳。'},
+      {title:'团队定海神针',desc:'你的存在本身就是一种稳定剂。团队动荡时是你，项目崩盘时也是你。你不一定是最耀眼的那个角色，但你是那个没有你整个项目就会散架的人。这种"隐形领导力"在成熟组织中是無价之宝。'},
+      {title:'极致耐心系统',desc:'当别人放弃时你还在坚持。不是因为你倔强，而是因为你有一种内在信念："只要方向对，慢一点没关系"。这种耐心让你在别人半途而废的领域最终做出成绩。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'突破舒适区',desc:'每个月做一件让你不舒服的事：当众发言、尝试新运动、独自旅行。记录每次突破后的感受。'},
+      {month:'4-6月',goal:'大胆表达立场',desc:'在每次讨论中主动说出"我认为…"。不附和任何人，只说你自己真实的想法。练习接受"别人可能不同意"。'},
+      {month:'7-9月',goal:'培养一项创作',desc:'找到一种表达方式：写作、画画、摄影、音乐、手工。不是为了展示，而是为了让你看到"原来我也可以创造"。'},
+      {month:'10-12月',goal:'练习拥抱变化',desc:'每周改变一个日常习惯：换个路线回家、换一家餐厅吃饭、尝试一种新的穿着风格。微小变化的积累让你慢慢不再害怕不确定性。'}
+    ],
+    lovePattern:'你在感情中是"细水长流"型。你不会一见钟情地坠入爱河，你的感情是慢慢累积的——像森林一样，一层一层地沉淀。这对追求你的人来说可能造成困惑：他们感觉不到你的热情。但你一旦确认了对方是"对的"，你的忠诚度是最高的。你需要更主动地表达你的喜欢——用行动、用语言，而不是默认"你懂的"。',
+    bestMatch:{name:'极光绿',desc:'你的稳重给对方提供了可以安心回归的港湾，而对方的探索精神能带你看你没见过的风景。一个扎根、一个飞翔——你们的平衡刚刚好。'},
+    careerDeep:[
+      {title:'项目管理/运营',match:94},
+      {title:'建筑师/景观设计师',match:90},
+      {title:'教育工作者',match:88},
+      {title:'医疗/健康管理',match:86},
+      {title:'农业/生态保护',match:85}
+    ]
+  },
+  {/* 3 樱花粉 */
+    name:'樱花粉',color:'#E8A0BF',colorLight:'#FDF4F8',
+    tagline:'温柔浪漫者 · 心怀美好',
+    hiddenTalents:[
+      {title:'超感共情力',desc:'你的共情不是"我理解你"——而是"我感受到了你感受到的"。你的情感颗粒度极高，能辨识出微妙的情绪变化。这在心理咨询、艺术创作、亲密关系中是一种超人能力。别人需要用套路的沟通技巧，你用本能就够了。'},
+      {title:'审美决策力',desc:'你的审美直觉非常精准。在看到一件事物的瞬间，你已经完成了"美不美"的评判——而且往往是对的。这种快速审美判断在设计、品牌、内容创作等领域是一笔真正的财富。'},
+      {title:'私密空间营造术',desc:'你拥有把任何一个空间变得"有温度"的魔力。你的家、你的书桌、你做的一顿饭——都带着你独特的温柔标记。这种能力不仅仅是装饰，更是一种创造安全空间的能力。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'情绪边界建立',desc:'每天练习区分"我的情绪"和"别人的情绪"。当别人情绪低落时，问自己："我需要为此负责吗？"如果答案是否定的，允许自己不背负。'},
+      {month:'4-6月',goal:'独处的质量',desc:'每周留半天完全属于自己的时间。不是用来看别人的社交动态，而是做一件只为你自己快乐的事：画画、养花、写手帐。'},
+      {month:'7-9月',goal:'把敏感变成创作',desc:'你的感受力是宝藏。开始写日记、拍照、画图——把你的细腻感受变成有形的作品。你会发现表达本身就是治愈。'},
+      {month:'10-12月',goal:'练习被照顾',desc:'允许别人为你做一件事：帮你拿东西、请你吃饭、给你安慰。练习说"谢谢你"而不是"不用麻烦你了"。'}
+    ],
+    lovePattern:'你在感情中很容易被对方的情绪淹没。你太会感受对方的喜怒哀乐，以至于有时候分不清哪些情绪是你自己的。你的吸引力在于你让人感到被完全接纳——但这种接纳如果不设边界，会消耗你。你需要找一个既懂得欣赏你的温柔、又能保护你不被过度消耗的人。学会问："对方有没有同样为我情绪留出空间？"',
+    bestMatch:{name:'大地棕',desc:'对方的稳重和可靠给了你一个安全的容器，让你可以自由地表达情感而不被评判。而你的温柔让对方的理性世界多了色彩和温暖。'},
+    careerDeep:[
+      {title:'艺术创作/花艺/设计',match:95},
+      {title:'心理咨询/艺术治疗',match:92},
+      {title:'内容创作/编辑',match:90},
+      {title:'人文教育/儿童教育',match:87},
+      {title:'品牌策划/用户体验',match:85}
+    ]
+  },
+  {/* 4 月光银 */
+    name:'月光银',color:'#A0ADC2',colorLight:'#F4F6F9',
+    tagline:'沉静观察者 · 冷静而通透',
+    hiddenTalents:[
+      {title:'剥离能力',desc:'你拥有一种罕见的信息处理方式：你天然地能把事实和情绪分开。别人被情绪裹挟时，你已经看到了事情的本质。这种"认知剥离"能力在危机处理、法务、战略决策中是顶级天赋。'},
+      {title:'元认知优势',desc:'你不仅思考——你还思考"自己的思考"。你能够观察自己的思维过程本身，这让你的判断比别人多了一层校验。大多数人一辈子都做不到这一点。'},
+      {title:'环境免疫系统',desc:'你不太容易被环境改变。流行对你的影响微乎其微，群体的情绪也很难裹挟你。这种独立性让"独立思考"对你来说不是一句口号，而是日常状态。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'社交微剂量',desc:'每周安排一次小型社交——2到3人的深度交流，而不是大型喧嚣的聚会。练习在对话中分享一个关于自己的小细节。'},
+      {month:'4-6月',goal:'情绪词汇扩容',desc:'记录一周内你经历的所有情绪，用更精确的词来描述。不是"心情不好"而是"失望"、"倦怠"、"隐约的担忧"。精确命名本身就是疗愈。'},
+      {month:'7-9月',goal:'对外分享思考',desc:'你的思考如果只发生在脑子里，世界就少了一份珍贵的视角。开始写东西、做播客、拍视频——用你觉得最舒服的方式。'},
+      {month:'10-12月',goal:'允许不冷静',desc:'尝试一个月让自己"不那么理性"。看一部催泪电影尽情哭、为喜欢的球队喊破喉咙、在大自然里狂奔。用身体感受情绪，而不是用大脑分析情绪。'}
+    ],
+    lovePattern:'你在感情中最常遇到的问题不是"不关心"——而是对方感受不到你的关心。你的爱不是挂在嘴上的，而是沉默的注视、无声的陪伴。但你不得不说：大多数人需要语言和行动来确认爱。你需要练习用"对方的语言"表达爱：一句话、一个拥抱、一次主动的约会安排。这不是违背自己——这是在不同语言之间做翻译。',
+    bestMatch:{name:'樱花粉',desc:'对方的情感丰富度恰好填满你偶尔显得空旷的内心世界。你教对方冷静观察，对方教你温柔感受。完美的互补。'},
+    careerDeep:[
+      {title:'战略咨询/分析师',match:95},
+      {title:'法务/合规/审计',match:92},
+      {title:'编辑/独立作家',match:89},
+      {title:'科研/学术研究',match:87},
+      {title:'产品经理/架构师',match:84}
+    ]
+  },
+  {/* 5 烈焰红 */
+    name:'烈焰红',color:'#C75B5B',colorLight:'#FBEFEF',
+    tagline:'热情行动者 · 热烈而果敢',
+    hiddenTalents:[
+      {title:'启动势能',desc:'你拥有一种从0到1的爆发力。别人还在犹豫、"再想想"的时候，你已经跨出了第一步。这种启动能力在创业、项目管理、运动竞技中是决定性的优势。大多数项目不是失败在"做得不好"，而是失败在"从来没有开始"。'},
+      {title:'能量放大器',desc:'你不仅自己行动力强，你还能让别人也跟着行动起来。你的激情是有感染力的——当你相信一件事，身边的人会不由自主地被你带动。这是天生的领导力。'},
+      {title:'失败免疫力',desc:'你对失败的恐惧非常低。在你看来，失败不是结果，是"实验数据"。这种成长型思维让你在别人因害怕犯错而停滞时，已经积累了丰富的实战经验。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'慢下来训练',desc:'每天给自己10分钟，什么都不做。不看手机、不做计划、不思考，只是安静地喝杯茶。练习"不作为"本身就是一种作为。'},
+      {month:'4-6月',goal:'倾听练习',desc:'每次对话中，让对方先说、说完。练习在回应之前先复述一遍："我听到你说…是这样吗？"延迟你"马上解决"的冲动。'},
+      {month:'7-9月',goal:'深度打磨一项技能',desc:'选一项你已经擅长但从未深耕的技能，投入100小时精进。行动力快是你的优势，但深度也同样重要。'},
+      {month:'10-12月',goal:'建立复盘系统',desc:'每周做一次复盘：这周做了哪些决定？哪些是对的？哪些应该调整？把你的行动力从"本能"变成"系统"。'}
+    ],
+    lovePattern:'你在感情中最大的问题是"太快了"。你告白太快、推进太快、甚至连分手也太快。你的热情在开始阶段极具吸引力——但热情消退后，你自己也容易感到索然无味。学会慢下来，给感情时间去沉淀。不是每段感情都需要炽热的开局，也不是每次心动都值得立刻行动。真正的亲密是慢慢长出来的，不是冲出来的。',
+    bestMatch:{name:'森林绿',desc:'你是一团火，对方是一片森林。对方的包容给了你燃烧的空间，而对方的内在稳定性让你在需要休息时有一个安全的落脚点。'},
+    careerDeep:[
+      {title:'创业者/创始人',match:97},
+      {title:'销售/商务拓展',match:94},
+      {title:'活动策划/导演',match:91},
+      {title:'运动教练/体能训练',match:88},
+      {title:'公共演讲/媒体人',match:86}
+    ]
+  },
+  {/* 6 星空紫 */
+    name:'星空紫',color:'#9B7EC4',colorLight:'#F3EFF8',
+    tagline:'创意梦想家 · 灵魂自带光芒',
+    hiddenTalents:[
+      {title:'连接感知力',desc:'你拥有将无关事物连接起来的罕见能力——别人看到两条平行线，你看到交点。这种"跨领域连接"能力是所有突破性创造的基础。历史上大多数伟大的发明家和艺术家都拥有这种能力。'},
+      {title:'框架打破者',desc:'当别人在既有游戏规则中绞尽脑汁时，你已经在发明一套新的规则。你不接受"咱们一直就是这么做的"——这种反叛不是破坏，是革新。在需要转型和创新的场景中，你是那个人人需要的"外卡选手"。'},
+      {title:'直觉引擎',desc:'你的直觉经常快过你的逻辑。你有时候说不出原因但就是"知道"。这不是玄学——这是你的潜意识在处理大量信息后给出的快速决策。信任你的直觉，但要学会在事后用逻辑验证它。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'建立创作仪式',desc:'每天25分钟固定创作时间。无论是写、画、弹、想——关键不在于产出什么，而在于养成"每天都创造"的习惯。'},
+      {month:'4-6月',goal:'学会完成',desc:'选一个你曾经开了头但没完成的项目，制定一个90天内完成它的计划。用甘特图、番茄钟、找一个伙伴监督——任何方法都可以。完成一件事的成就感会改变你对"执行力"的认知。'},
+      {month:'7-9月',goal:'在约束中创造',desc:'刻意给自己设定限制：一首只用10个词的诗、一张只用3种颜色的画。限制不是枷锁——它恰恰是创作的催化剂。'},
+      {month:'10-12月',goal:'把想法卖出去',desc:'学习如何把你的想法"翻译"给别人听。不是每个人都能理解抽象的概念——练习用故事、比喻、戏剧化的方式来传达你的想法。最好的创意没人理解就等于不存在。'}
+    ],
+    lovePattern:'你的自由感和独特个性是你的魅力所在——但也让感情充满不确定性。你害怕被束缚，害怕日复一日的重复碾碎你的灵性。你需要的不一定是"稳定型"伴侣，而是"成长型"伴侣——一个愿意和你一起进化、一起探索未知的人。同时你需要学会在感情中保持一定的"锚点"：一个生日、一个约定的周末、一个只有你们两知道的梗。这些小小的锚点让你在最自由的时候也知道哪里是家。',
+    bestMatch:{name:'烈焰红',desc:'你的创意加上对方的行动力，是势不可挡的组合。你想出来的事，对方能帮你实现。对方的热烈也让你的精神世界有了在现实世界的出口。'},
+    careerDeep:[
+      {title:'设计师/艺术家',match:98},
+      {title:'科技创新/产品创意',match:94},
+      {title:'作家/编剧/音乐人',match:91},
+      {title:'品牌策划/创意总监',match:89},
+      {title:'独立创业者',match:87}
+    ]
+  },
+  {/* 7 大地棕 */
+    name:'大地棕',color:'#A0846E',colorLight:'#F6F3F0',
+    tagline:'可靠实干者 · 如山般稳重',
+    hiddenTalents:[
+      {title:'系统建构力',desc:'你拥有将混乱转变为秩序的能力。当别人面对一团乱麻感到无力时，你已经在搭建处理流程。这种系统化思维在工程、管理、创新创业中都是稀缺资源。你不是"执行者"——你是"架构者"。'},
+      {title:'信守承诺磁场',desc:'你身上有一种让人天然信任的气场。这种信任不是靠言语建立的，是你一次又一次的"说到做到"积累而成。在商业合作、团队建设、亲密关系中，信任是最昂贵的资产，而你不需要花钱就拥有它。'},
+      {title:'压力转化机制',desc:'你的抗压能力不是"硬撑"——而是你真的能在高压下保持稳态。这种稳定性让你在任何组织中都是"关键人"——那些必须在风暴中保持清晰的角色需要你。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'自我认可训练',desc:'每天写下三件你今天做得好的事。不管多小——"准时提交了报告"、"今天按时吃饭"、"帮同事解决了一个问题"。写够90天回头看。'},
+      {month:'4-6月',goal:'展示给世界看',desc:'把你的成果公开分享。在周会上展示你的工作、发一篇LinkedIn、在朋友圈分享一个你完成的项目。练习让该看到的人看到你的价值。'},
+      {month:'7-9月',goal:'培养一个艺术爱好',desc:'选一件"不实用"但让你纯粹快乐的事情：弹琴、画画、陶艺。不是为了产出——而是让你发现生活中除了"做对"还有"做美"。'},
+      {month:'10-12月',goal:'学会休息',desc:'计划一个真正放松的假期。不安排行程、不定目标、不做攻略。学习什么也不做的艺术。休息不是偷懒，是下一段冲锋的燃料。'}
+    ],
+    lovePattern:'你在感情中是"深水潜流"——对方看到的平静表面下，其实有很深的情感暗流。但你的问题在于你不会"秀"——你不擅长表达爱。你的伴侣可能会觉得"他到底喜不喜欢我？"而你觉得"我都做了这么多难道还不够明显吗？"答案是：不够明显。你需要用对方的"爱的语言"去表达——如果对方需要语言确认，就说话；需要身体接触，就拥抱。爱你的人值得这个"翻译"。',
+    bestMatch:{name:'星空紫',desc:'你给了创意飘在天上的对方一个现实世界的锚点，而对方让你的生活充满了你从未想过的可能性。实用与灵感的完美平衡。'},
+    careerDeep:[
+      {title:'项目管理/工程',match:96},
+      {title:'财务/审计/风控',match:93},
+      {title:'制造业/供应链',match:90},
+      {title:'医疗技术/药剂',match:87},
+      {title:'公务员/政府机构',match:85}
+    ]
+  },
+  {/* 8 极光绿 */
+    name:'极光绿',color:'#5EAB8A',colorLight:'#EEF8F3',
+    tagline:'自由探索者 · 永远好奇',
+    hiddenTalents:[
+      {title:'适应变异力',desc:'你在任何环境中都能找到生存和绽放的方式。这种"环境自适应"能力是进化意义上的顶级天赋。把你放在任何城市、任何行业、任何文化中，你都能在短时间内找到自己的节奏。'},
+      {title:'文化解码者',desc:'你能快速理解不同文化、不同圈子、不同年龄层的语言和规则。这种"跨文化沟通"能力在全球化场景中是极度稀缺的。你能和任何人找到话题——不是因为你什么都知道，而是因为你真的对每个人都好奇。'},
+      {title:'嗅觉雷达',desc:'你有一种"趋势嗅觉"——在大多数人还没注意到的时候，你已经捕捉到了新事物的价值。无论是新音乐、新审美、新生活方式，你总是走在前面半步。这半步刚刚好——既不过于前卫而无法被理解，也不落后于人潮。'}
+    ],
+    annualPlan:[
+      {month:'1-3月',goal:'找到一个深耕领域',desc:'在广泛探索的基础上，选择一项你愿意投入一年以上的领域深入学习。兴趣宽广是优势，但没有一个深耕的方向会让自己散落。'},
+      {month:'4-6月',goal:'建立稳定的routine',desc:'选三个"无论发生什么都会做"的小仪式：晨间10分钟冥想、睡前3件感恩的事、每周一次和家人的深度通话。自由需要锚点。'},
+      {month:'7-9月',goal:'记录探索日志',desc:'每天记录一个你学到的东西、一个你发现的灵感、一个你想探索的方向。三个月后回看，你會被自己走过的路震撼。'},
+      {month:'10-12月',goal:'做一件需要长期承诺的事',desc:'养一盆植物、学一门乐器、参加一个为期半年的课程。练习在自由的同时保持承诺。证明给自己看：自由和担当是可以共存的。'}
+    ],
+    lovePattern:'你在感情中最容易被"新鲜感"驱动——但也最容易因为同样的原因感到无聊。你需要的不一定是频繁更换伴侣，而是和一个愿意和你一起探索世界的人一起成长。你们一起去新的地方、尝试新的经历、讨论新的想法——在这样的关系中，你不会感到"被困住"。同时你需要学会区分"新鲜感的消退"和"真正的不合适"——前者是任何长期关系都会经历的阶段，只有后者才值得你离开。',
+    bestMatch:{name:'烈焰红',desc:'你们都是不喜欢被束缚的人。一起探索、一起冒险、一起在这个世界上留下脚印。对方驱动力强，你灵感不断——你们的共同生活永远不会无聊。'},
+    careerDeep:[
+      {title:'旅行作家/博主/记者',match:96},
+      {title:'摄影师/纪录片导演',match:93},
+      {title:'自由职业/数字游民',match:91},
+      {title:'国际商务/外交',match:88},
+      {title:'生态/环境研究',match:86}
+    ]
+  }
+];
+
+// ========== 读取URL参数 ==========
+const params = new URLSearchParams(window.location.search);
+const typeId = parseInt(params.get('type')) || 0;
+const rep = REPORTS[typeId] || REPORTS[0];
+
+// ========== 渲染页面 ==========
+document.getElementById('hero').style.background = `linear-gradient(160deg,${rep.colorLight},#faf9fb)`;
+document.getElementById('hero-circle').style.background = `linear-gradient(135deg,${rep.color},${rep.color}cc)`;
+document.getElementById('hero-name').textContent = rep.name;
+document.getElementById('hero-tagline').textContent = rep.tagline;
+
+const html = `
+  <div class="section">
+    <h2>🔮 你的隐藏天赋</h2>
+    <p style="color:var(--text2);margin-bottom:12px;">每个色彩人格都有三样连自己都未必意识到的天赋。这些不是"你很优秀"的客套话——而是基于你的人格模式，真正能让你在人群中脱颖而出的独特能力。</p>
+    ${rep.hiddenTalents.map((t,i) => `
+      <div class="insight-box">
+        <h3 style="color:${rep.color};">${i+1}. ${t.title}</h3>
+        <p>${t.desc}</p>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <h2>💼 职业深度导航</h2>
+    <p style="color:var(--text2);margin-bottom:12px;">根据你的性格特质，以下是5个与你匹配度极高的职业方向。匹配度基于人格类型与职业要求的重叠程度。</p>
+    ${rep.careerDeep.map(c => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0edf5;">
+        <span style="font-weight:500;">${c.title}</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span style="width:${c.match}px;height:6px;border-radius:3px;background:${rep.color};display:inline-block;"></span>
+          <span style="font-size:.85rem;font-weight:600;color:${rep.color};">${c.match}%</span>
+        </span>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <h2>💞 亲密关系深度解读</h2>
+    <p style="color:var(--text2);">${rep.lovePattern}</p>
+    <div class="insight-box" style="margin-top:16px;">
+      <p><strong>💑 最佳搭配色：${rep.bestMatch.name}</strong></p>
+      <p style="margin-top:4px;">${rep.bestMatch.desc}</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📅 专属年度成长计划</h2>
+    <p style="color:var(--text2);margin-bottom:12px;">12个月，四个季度，四个明确的成长目标。不是为了"改正"你，而是帮助你发挥优势、同时关注那些需要被温柔对待的成长点。</p>
+    ${rep.annualPlan.map(q => `
+      <div style="background:var(--bg);border-radius:14px;padding:14px 16px;margin-bottom:10px;">
+        <span style="display:inline-block;background:${rep.color};color:#fff;padding:3px 12px;border-radius:12px;font-size:.8rem;font-weight:600;margin-bottom:6px;">${q.month}</span>
+        <h4 style="margin:6px 0 4px;">🎯 ${q.goal}</h4>
+        <p style="font-size:.9rem;color:var(--text2);">${q.detail}</p>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section" style="text-align:center;">
+    <h2 style="justify-content:center;">🌟 这份报告的使命</h2>
+    <div class="quote">
+      "深度报告不是为了定义你是谁——<br>
+      而是为了让你看到自己一直有但从未被承认的光芒。<br>
+      你已经足够优秀。现在，带着这份确认，出发吧。"
+    </div>
+    <p style="font-size:.85rem;color:var(--text2);">
+      📌 本报告永久有效 · 可随时回看<br>
+      🎨 色彩人格测试 · 认识自己是一生的浪漫
+    </p>
+  </div>
+`;
+
+document.getElementById('content').innerHTML = html;
+</script>
+</body>
+</html>

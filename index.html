@@ -388,6 +388,91 @@ body {
   min-height: 320px;
 }
 
+/* 答题维度标签 */
+.quiz-dim-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 2px 10px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+  animation: fadeIn .4s ease;
+}
+
+/* 名人匹配卡片 */
+.celebrity-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.celebrity-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+.celebrity-info { flex:1 }
+.celebrity-info h4 { font-size: 1rem; margin-bottom: 2px; }
+.celebrity-info .role { font-size: .75rem; color: var(--text-muted); }
+.celebrity-info p { font-size: .85rem; color: var(--text2); margin-top:4px; line-height:1.5; }
+.celebrity-divider {
+  text-align: center; padding: 8px 0; font-size: .8rem; color: var(--text-muted);
+}
+
+/* 人格徽章 */
+.badge-card { text-align: center; }
+.badge-preview {
+  display: inline-block; padding: 16px 24px; border-radius: 20px;
+  text-align: center; color: #fff; margin: 8px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.badge-preview .badge-icon { font-size: 2rem; display: block; margin-bottom: 4px; }
+.badge-preview .badge-title { font-size: 1.1rem; font-weight: 700; letter-spacing: .04em; }
+.badge-preview .badge-sub { font-size: .75rem; opacity: .85; margin-top: 2px; }
+.badge-download-btn {
+  display: inline-block; margin-top:10px; padding:8px 20px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 20px; font-size: .85rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+}
+.badge-download-btn:hover { transform: translateY(-1px); opacity:.9; }
+.badge-download-btn:active { transform: scale(.96); }
+
+/* 信件卡片 */
+.letter-card { position: relative; overflow: hidden; }
+.letter-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent-light));
+}
+.letter-card p { font-style: italic; color: #6b5e80; line-height: 2; }
+.letter-card .letter-signature { font-style: normal; text-align: right; color: var(--text2); margin-top: 16px; }
+
+/* 炫耀卡片（支付后） */
+.brag-overlay {
+  position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.brag-card {
+  background: #fff; border-radius: 24px; padding: 32px 24px 20px;
+  max-width: 360px; width: 100%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  animation: popUp .4s cubic-bezier(.175,.885,.32,1.275);
+}
+.brag-card .brag-icon { font-size: 3rem; margin-bottom: 8px; }
+.brag-card h3 { font-size: 1.3rem; margin-bottom: 4px; }
+.brag-card .brag-tag { display: inline-block; padding: 4px 14px; border-radius: 14px; color: #fff; font-weight: 700; margin: 6px 0; }
+.brag-card .brag-url { font-size: .8rem; color: var(--text-muted); margin: 8px 0; }
+.brag-card .brag-btns { display: flex; gap: 8px; margin-top: 12px; }
+.brag-card .brag-btns button { flex: 1; padding: 10px; border-radius: 20px; border: none; font-weight: 600; font-size: .85rem; cursor: pointer; }
+.brag-card .brag-btns .brag-share { background: var(--accent); color: #fff; }
+.brag-card .brag-btns .brag-view { background: var(--bg); color: var(--text); }
+
+[data-theme="dark"] .brag-card { background: #242438; }
+[data-theme="dark"] .quiz-dim-tag { background: #3a3050; }
+
 .quiz-question-number {
   font-size: var(--font-sm);
   color: var(--accent);
@@ -941,10 +1026,28 @@ body {
    💰 变现模块样式
    =========================== */
 .premium-card {
-  background: linear-gradient(135deg, #fffdf5, #fef9e7);
-  border: 1.5px dashed #e0d4a0;
+  background: linear-gradient(135deg, #fffdf5 0%, #fef9e7 40%, #fffdf0 100%);
+  border: 2px solid #f5c842;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: premiumGlow 3s ease-in-out infinite;
+}
+
+@keyframes premiumGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0.15); }
+  50% { box-shadow: 0 0 0 12px rgba(245, 200, 66, 0); }
+}
+
+.premium-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(200, 170, 60, 0.25);
+  border-color: #e8b730;
+}
+
+.premium-card:active {
+  transform: scale(0.98);
 }
 
 [data-theme="dark"] .premium-card {
@@ -953,16 +1056,86 @@ body {
 }
 
 .premium-card::before {
-  content: '🔒 付费解锁';
+  content: '👆 点击解锁';
   position: absolute;
   top: 12px;
   right: 14px;
   font-size: 0.7rem;
   font-weight: 600;
   color: #b8a050;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.85);
   padding: 3px 10px;
   border-radius: 10px;
+  animation: bounceBadge 2s ease-in-out infinite;
+}
+
+@keyframes bounceBadge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* 限时倒计时 */
+.countdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  font-size: 0.8rem;
+  color: #e8873a;
+  font-weight: 600;
+}
+
+.countdown-timer {
+  background: #fff3e8;
+  color: #e8873a;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+[data-theme="dark"] .countdown-timer {
+  background: #3a2a1a;
+}
+
+/* 社交证明 */
+.social-proof {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.social-proof .pulse-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #07c160;
+  margin-right: 4px;
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* 免费预览标签 */
+.free-preview-badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 6px;
+  animation: fadeInUp .5s ease;
+}
+  50% { transform: translateY(-4px); }
 }
 
 .premium-teaser-list {
@@ -1059,6 +1232,136 @@ body {
   font-weight: 600;
   letter-spacing: 0.03em;
 }
+
+/* ===========================
+   💳 支付弹窗
+   =========================== */
+.payment-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .25s ease;
+  padding: 20px;
+}
+
+.payment-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px 22px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: popUp .35s cubic-bezier(.175,.885,.32,1.275);
+}
+
+.payment-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.payment-close:hover { background: #e8e5ec; }
+
+.payment-modal h3 {
+  font-size: 1.3rem;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.payment-price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #f5a623;
+  margin: 8px 0;
+  letter-spacing: .02em;
+}
+
+.payment-qr-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.payment-qr-item { text-align: center; }
+
+.payment-qr-img {
+  width: 120px;
+  height: auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.payment-unlock-btn {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #07c160, #06ad56);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  letter-spacing: .04em;
+  box-shadow: 0 4px 16px rgba(7,193,96,0.3);
+  transition: var(--transition);
+  margin-top: 4px;
+}
+
+.payment-unlock-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(7,193,96,0.4);
+}
+
+.payment-unlock-btn:active { transform: scale(.97); }
+
+/* 支付方式选择按钮 */
+.payment-method-btn {
+  display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+  border-radius: 16px; text-decoration: none; margin-bottom: 10px;
+  transition: all .3s ease; border: 2px solid transparent;
+  cursor: pointer;
+}
+.payment-method-btn:hover { transform: translateY(-2px); }
+.payment-method-btn:active { transform: scale(.97); }
+
+.wechat-btn {
+  background: linear-gradient(135deg, #f0fef0, #e8f8e8);
+  border-color: #07c160;
+}
+.wechat-btn:hover { box-shadow: 0 4px 20px rgba(7,193,96,.2); }
+[data-theme="dark"] .wechat-btn { background: linear-gradient(135deg, #1a3020, #15281a); }
+
+.alipay-btn {
+  background: linear-gradient(135deg, #f0f4fe, #e8eef8);
+  border-color: #1677ff;
+}
+.alipay-btn:hover { box-shadow: 0 4px 20px rgba(22,119,255,.2); }
+[data-theme="dark"] .alipay-btn { background: linear-gradient(135deg, #1a2030, #151a28); }
+
+.pm-icon { font-size: 1.8rem; flex-shrink: 0; }
+.pm-text { flex: 1; text-align: left; }
+.pm-title { display: block; font-size: 1rem; font-weight: 700; color: var(--text); }
+.pm-sub { display: block; font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+.pm-arrow { font-size: 1.3rem; color: var(--text-muted); flex-shrink: 0; }
 
 /* ===========================
    分享引导弹窗
@@ -1744,6 +2047,13 @@ const TEST_CONFIG = {
   personalityCount: 9,
 };
 
+// 🔧 支付链接 — 替换为你自己的收款链接
+// 微信：打开微信 → 我 → 服务 → 收付款 → 二维码收款 → 保存收款码 → 用工具转成链接
+// 支付宝：打开支付宝 → 收钱 → 保存收款码 → 用工具转成链接
+const PAYMENT_URLS = {
+  wechat: '#付款:(W5M2005)/深度报告收款/001',
+};
+
 // 音效：默认关闭
 let soundEnabled = false;
 
@@ -1889,6 +2199,34 @@ const DIMENSION_SCORES = [
   [70, 65, 60, 25, 95, 30], // 7 大地棕
   [60, 40, 70, 75, 35, 55], // 8 极光绿
 ];
+
+// 名人匹配 + 影视角色
+const CELEBRITY_DATA = [
+  { celebrity:'何炅', celebDesc:'用温暖和善意让每个人都感到被看见', character:'龙猫', charDesc:'不言不语却给人最踏实的陪伴，温暖了一代人的童年', charFrom:'《龙猫》' },
+  { celebrity:'刘慈欣', celebDesc:'以深邃的思维构建了整个宇宙的逻辑', character:'夏洛克·福尔摩斯', charDesc:'在所有人看到混乱时，只有他看到了规律', charFrom:'《神探夏洛克》' },
+  { celebrity:'宫崎骏', celebDesc:'用一部部作品守护着人类与自然的平衡', character:'甘道夫', charDesc:'不追求权力与光环，却在最需要的时候成为所有人的支柱', charFrom:'《指环王》' },
+  { celebrity:'奥黛丽·赫本', celebDesc:'优雅而温柔，是全世界心中永远的女神', character:'千寻', charDesc:'纤细敏感却拥有不可思议的勇气，在陌生世界里找到了自己的名字', charFrom:'《千与千寻》' },
+  { celebrity:'王家卫', celebDesc:'冷冷地观察这个世界，却拍出了最深情的电影', character:'尼奥', charDesc:'看透了世界的底层代码，在清醒中做出了最勇敢的选择', charFrom:'《黑客帝国》' },
+  { celebrity:'罗永浩', celebDesc:'说干就干，跌倒了爬起来再干，从不怕人看笑话', character:'路飞', charDesc:'一个说要成为海贼王的男人，所有人都笑他，但跟在他身边的人都知道他是认真的', charFrom:'《海贼王》' },
+  { celebrity:'窦唯', celebDesc:'不在乎商业和主流，用一生追寻自己的音乐宇宙', character:'卢娜·洛夫古德', charDesc:'别人觉得她怪，但她只是活在自己的世界里——而那个世界比大多数人的都精彩', charFrom:'《哈利·波特》' },
+  { celebrity:'任正非', celebDesc:'不追逐风口，不炒作概念，用几十年的时间默默建起了自己的帝国', character:'维托·柯里昂', charDesc:'话不多但每句都算数，是那个所有人都愿意托付信任的人', charFrom:'《教父》' },
+  { celebrity:'徐霞客', celebDesc:'用脚丈量大地，一生都在路上，留下了千古奇书', character:'卡尔·弗雷德里克森', charDesc:'年迈却一腔孤勇，用飞屋环游世界证明梦想与年龄无关', charFrom:'《飞屋环游记》' },
+];
+
+// 答题维度标签（每道题测量什么）
+const QUESTION_DIMENSIONS = [
+  '🫂 社交能量', '💪 行动模式', '🧠 思维方式', '🫂 社交能量', '💪 行动模式',
+  '❤️ 情感内核', '🫂 社交能量', '💪 行动模式', '❤️ 情感内核', '🧠 思维方式',
+  '❤️ 情感内核', '🧠 思维方式', '🫂 社交能量', '💪 行动模式', '🧠 思维方式',
+  '❤️ 情感内核', '🫂 社交能量', '🧠 思维方式', '❤️ 情感内核', '💪 行动模式'
+];
+// 每个维度对应的卡片背景色
+const DIMENSION_COLORS = {
+  '🫂 社交能量': 'linear-gradient(135deg, #fef9f4 0%, #fdf4f0 50%, #fef9f4 100%)',
+  '🧠 思维方式': 'linear-gradient(135deg, #f5f6fa 0%, #eef1f8 50%, #f5f6fa 100%)',
+  '💪 行动模式': 'linear-gradient(135deg, #fef5f5 0%, #fdf0f0 50%, #fef5f5 100%)',
+  '❤️ 情感内核': 'linear-gradient(135deg, #f9f6fc 0%, #f4eff9 50%, #f9f6fc 100%)',
+};
 
 /* ============================================================
    🔧 20 道题目
@@ -2589,70 +2927,430 @@ function getBarnumHTML() {
    替换其中的二维码图片即可使用
    ============================================================ */
 function getPremiumHTML() {
+  // 生成社交证明数字（基于localStorage累计）
+  const totalUnlocks = getTotalUnlocks();
+  const todayUnlocks = getTodayUnlocks();
+
   return `
-    <div class="card result-card premium-card" id="premium-section">
+    <div class="card result-card premium-card" id="premium-section" onclick="showPaymentModal()">
       <h3>🔓 解锁你的专属深度报告</h3>
       <p style="color:var(--text-secondary);margin-bottom:10px;">基础结果只是冰山一角，完整报告包含：</p>
       <ul class="premium-teaser-list">
         <li>✅ <span>深度性格拆解（6大维度逐项分析）</span></li>
         <li>✅ <span>专属职业导航（最适合你的10个岗位）</span></li>
         <li>✅ <span>最佳配对分析（你和哪种人格天作之合）</span></li>
-        <li class="locked">🔒 <span class="locked">你的隐藏天赋报告 — 连你自己都没发现的 3 个潜能</span></li>
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            🔮 <span>隐藏天赋报告 — 连你自己都没发现的 3 个潜能</span>
+            <span class="free-preview-badge">免费试看 1 条 👇</span>
+          </span>
+          <div style="margin:8px 0 0 24px;padding:10px 14px;background:#faf9fb;border-radius:10px;font-size:.85rem;color:var(--text-secondary);border-left:3px solid #9b7ec4;">
+            <span style="font-weight:600;color:#9b7ec4;">${getFreeTalentPreview()}</span>
+          </div>
+        </li>
         <li class="locked">🔒 <span class="locked">年度成长计划 — 专属于你的 12 个月蜕变路线图</span></li>
         <li class="locked">🔒 <span class="locked">亲密关系深度解读 — 为什么你在感情中总是重复某个模式</span></li>
       </ul>
       <div style="text-align:center;">
-        <span class="premium-price-tag">💰 仅需 9.9 元</span>
+        <span class="premium-price-tag">💰 仅需 2.9 元 · 点击立即解锁</span>
       </div>
-      <p style="text-align:center;font-size:var(--font-xs);color:var(--text-muted);margin-top:6px;">
-        📱 扫码下方微信，发送「深度报告」即可获取
+      <div class="countdown-row">
+        ⏰ 今日特价 <span class="countdown-timer" id="countdown-timer">--:--:--</span> 明日恢复 ¥9.9
+      </div>
+      <div class="social-proof">
+        <span class="pulse-dot"></span>今日已有 <strong>${todayUnlocks}</strong> 人解锁 · 累计 <strong>${totalUnlocks}</strong> 人
+      </div>
+    </div>
+  `;
+}
+
+// 免费试看的隐藏天赋（根据人格类型不同）
+function getFreeTalentPreview() {
+  const id = state.resultPersonalityId || 0;
+  const previews = [
+    '情绪镜像能力：你拥有一种罕见的天赋——能像镜子一样映射他人的情绪状态。不需要对方开口，你已经感知到了。',
+    '模式识别天才：你拥有在混乱数据中发现规律的惊人能力。别人看到杂乱信息，你看到隐藏的逻辑链。',
+    '长线价值判断：当别人被短期噪音困扰时，你看到的是一件事的长期价值。这种判断力在投资、创业中是稀缺品质。',
+    '超感共情力：你的共情不是"我理解你"，而是"我感受到了你感受到的"。你的情感颗粒度极高。',
+    '认知剥离能力：你天然能把事实和情绪分开。别人被情绪裹挟时，你已经看到了事情的本质。',
+    '启动势能：你拥有从0到1的爆发力。别人还在犹豫时你已经跨出了第一步。大多数项目失败在"从未开始"。',
+    '连接感知力：你拥有将无关事物连接起来的罕见能力。别人看到平行线，你看到交点。这是创造力的基础。',
+    '系统建构力：你拥有将混乱转变为秩序的能力。当别人面对乱麻感到无力时，你已经在搭建处理流程。',
+    '适应变异力：你在任何环境中都能找到生存和绽放的方式。这是进化意义上的顶级天赋。'
+  ];
+  return previews[id] || previews[0];
+}
+
+// 社交证明数据
+function getTotalUnlocks() {
+  const base = 326;
+  const stored = parseInt(localStorage.getItem('premium-total-unlocks') || '0');
+  return base + stored;
+}
+
+function getTodayUnlocks() {
+  const today = new Date().toDateString();
+  const data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}');
+  return data[today] || Math.floor(Math.random() * 8) + 3;
+}
+
+// 更新社交证明
+function incrementUnlockStats() {
+  const total = (parseInt(localStorage.getItem('premium-total-unlocks') || '0')) + 1;
+  localStorage.setItem('premium-total-unlocks', total.toString());
+
+  const today = new Date().toDateString();
+  const data = JSON.parse(localStorage.getItem('premium-daily-unlocks') || '{}');
+  data[today] = (data[today] || Math.floor(Math.random() * 8) + 3) + 1;
+  localStorage.setItem('premium-daily-unlocks', JSON.stringify(data));
+}
+
+/* ============================================================
+   🌟 名人匹配
+   ============================================================ */
+function getCelebrityHTML() {
+  const id = state.resultPersonalityId || 0;
+  const cd = CELEBRITY_DATA[id];
+  const p = PERSONALITIES[id];
+  return `
+    <div class="card result-card celebrity-card">
+      <div class="celebrity-avatar" style="background:${p.colorLight};">🌟</div>
+      <div class="celebrity-info">
+        <h4>你和 <span style="color:${p.color};">${cd.celebrity}</span> 是同一种人</h4>
+        <p>${cd.celebDesc}</p>
+      </div>
+    </div>
+    <div class="celebrity-divider">🎬 你像哪个影视角色？</div>
+    <div class="card result-card celebrity-card">
+      <div class="celebrity-avatar" style="background:${p.colorLight};">🎬</div>
+      <div class="celebrity-info">
+        <h4><span style="color:${p.color};">${cd.character}</span> <span class="role">${cd.charFrom}</span></h4>
+        <p>${cd.charDesc}</p>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   🏅 人格徽章
+   ============================================================ */
+function getBadgeHTML() {
+  const id = state.resultPersonalityId || 0;
+  const p = PERSONALITIES[id];
+  const iconMap = ['☀️','🌊','🌿','🌸','🌙','🔥','✨','🏔️','🌌'];
+  return `
+    <div class="card result-card badge-card" id="badge-section">
+      <h3>🏅 你的人格徽章</h3>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:8px;">长按保存，设为头像或发朋友圈</p>
+      <div class="badge-preview" id="badge-preview" style="background:linear-gradient(135deg,${p.color},${p.color}cc);">
+        <span class="badge-icon">${iconMap[id]}</span>
+        <span class="badge-title">${p.name} · ${p.traits[0]}者</span>
+        <span class="badge-sub">🎨 色彩人格测试认证</span>
+      </div>
+      <button class="badge-download-btn" onclick="downloadBadge()">📥 下载徽章图片</button>
+    </div>
+  `;
+}
+
+function downloadBadge() {
+  const el = document.getElementById('badge-preview');
+  if (!el) return;
+  html2canvas(el, { backgroundColor: null, scale: 3 }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = '我的色彩人格徽章.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ 徽章已保存！');
+  }).catch(() => showToast('⚠️ 请长按徽章截图保存'));
+}
+
+/* ============================================================
+   💌 写给未来自己的一封信
+   ============================================================ */
+function getLetterHTML() {
+  const id = state.resultPersonalityId || 0;
+  const p = PERSONALITIES[id];
+  const letters = [
+    `亲爱的晨曦般的你，
+
+我知道你总是在照顾别人——你习惯了把温暖给出去，习惯了做那个"没事的，我在"的人。但我想提醒你一件事：你也是需要被照顾的。
+
+你不需要永远阳光普照。偶尔乌云蔽日也没关系，偶尔累了、不想笑了、也想被人抱一抱——这不是软弱，这是你作为一个真实的人最完整的样子。
+
+未来的你想对现在的你说：你已经足够好了。那些你觉得"还不够"的地方，恰恰是你最让人心疼的地方。学着对自己温柔一点——就像你对世界那样。
+
+继续做一缕晨光吧——但别忘了，晨光也需要夜晚来休息。`,
+
+    `亲爱的深海般的你，
+
+你习惯了把一切想清楚再行动，习惯了在混乱中保持冷静，习惯了用理性包裹自己。但我想告诉你：不是所有事情都需要理解透彻才能去感受。
+
+有时候，答案不在思考的尽头，而在感受的起点。那些你一直试图分析的情感——爱、悲伤、喜悦——它们不需要被解构，只需要被体验。
+
+未来的你想对现在的你说：你的深度是礼物，但别让它成为一堵墙。偶尔让情绪流淌出来，偶尔允许自己"不懂"。世界不只需要你的智慧，也需要你真实的温度。`,
+
+    `亲爱的森林般的你，
+
+你是很多人生命中的定海神针——稳定、可靠、让人安心。但你可能不知道，你身上有一种被低估的力量：你让身边的人感到安全。
+
+这个快速旋转的世界里，所有人都被推着往前跑。而你是那个说"慢慢来，比较快"的人。这不是落伍——这是一种稀缺的品质。
+
+未来的你想对现在的你说：不必羡慕别人的速度。你的每一步都踩得比别人深。别人跑得快，但你可能走得更远。继续做那片森林——我们都需要你这样的存在。`,
+
+    `亲爱的樱花般的你，
+
+你的温柔不是缺点——它是你给这个世界最好的礼物。在一个人人强调"强"的时代，你的柔软是一种真正的勇敢。
+
+但有一件事想提醒你：你的感受很重要。别人开心时你不必强迫自己开心，别人难过时你不必总是做那个安慰的人。允许自己说"我今天不太好"、允许自己不总是被需要。
+
+未来的你想对现在的你说：你不需要为你的敏感道歉。正是这份敏感，让你能看到别人看不到的风景、感受到别人感受不到的微光。继续温柔地活着吧——但记得，这份温柔首先要给到自己。`,
+
+    `亲爱的月光般的你，
+
+你习惯了一个人。一个人的思考、一个人的空间、一个人的节奏。这种孤独不是寂寞——它是你的充电方式。但有时候，孤独太久了，你会忘记自己也是需要连接的。
+
+不是所有人都需要理解你的全部。但有些人，值得你打开一扇窗。他们不需要走进你的整个内心世界——只需要知道，窗帘后面，是一个有温度的人。
+
+未来的你想对现在的你说：保持你通透的视角，但偶尔也让自己被看到。你不需要发光如太阳——月光已经足够照见前路。`,
+
+    `亲爱的火焰般的你，
+
+我佩服你的行动力。在别人还在犹豫、还在"再想想"的时候，你已经冲出去了。这个世界需要更多像你这样的人——敢于开始、不惧失败。
+
+但有一件事想轻轻提醒你：不是所有战场都需要你。有时候，最难的不是冲锋，而是停下来。停下来感受一下身体的疲惫、停下来听听旁边的人有没有跟上。
+
+未来的你想对现在的你说：你的热情是天赋，但能量需要补充。学会在冲刺之间给自己留喘息的空隙。火焰不需要一直燃烧到最旺——保持不灭就好。`,
+
+    `亲爱的星空般的你，
+
+你有一种别人很难理解的力量：你能看到不存在的东西。不是幻觉——而是可能性。在别人只看到"A到B"的时候，你看到了"A到Z再到一个还没被命名的维度"。
+
+这种能力让你有时候感到孤独——因为不是所有人都能跟上你的视角。但请永远不要因为别人看不见，就怀疑自己看到的星光。
+
+未来的你想对现在的你说：继续做梦、继续连接看似无关的点、继续质疑理所当然的规则。孤独是创造者的常态，但它会在作品诞生的那一刻全部被偿还。`,
+
+    `亲爱的大地般的你，
+
+你默默做了很多事情——但你可能从来不知道，有多少人因为你而觉得生活是可靠的。你撑起的不是自己的天空，是很多人的。
+
+但有一句话想问你：你上次"为自己"做一件事是什么时候？不是责任、不是义务、不是因为别人需要——纯粹因为你自己想要。
+
+未来的你想对现在的你说：你可以依靠，但你不需要承受一切。偶尔把重担放下，偶尔让别人来撑一撑。你是一座山——但山也有属于自己的风景要去看。`,
+
+    `亲爱的极光般的你，
+
+你的自由感是你最迷人的地方。你不想被任何标签定义、不想被任何地方困住、不想走别人走过的路。这种探索精神是你独一无二的色彩。
+
+但有一个小小的提醒：自由不是不停地离开。有时候最难的自由是在同一个地方不断深入、在同一段关系里不断成长、在同一条路上不断发现新的风景。
+
+未来的你想对现在的你说：继续探索这个世界——但也给自己一个可以回去的地方。不是牢笼，是锚。有了锚，你的自由才能真正展开。`
+  ];
+  return `
+    <div class="card result-card letter-card" id="letter-section">
+      <h3>💌 写给现在的你</h3>
+      <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px;">—— 来自未来的${p.name}</p>
+      <p>${letters[id]}</p>
+      <p class="letter-signature">—— 五年后的你 · 留</p>
+      <p style="text-align:center;margin-top:12px;">
+        <button class="badge-download-btn" onclick="downloadLetter()" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);">📋 复制这封信</button>
       </p>
     </div>
   `;
 }
 
-function getWechatFunnelHTML() {
-  return `
-    <div class="card result-card qr-card" id="wechat-section">
-      <h3>💬 免费领取《人格成长手册》</h3>
-      <p style="color:var(--text-secondary);margin-bottom:12px;">
-        加微信，回复「色彩」即可领取：
-      </p>
-      <p style="font-size:var(--font-sm);color:var(--text-muted);">
-        📖 专属性格成长建议<br>
-        🧠 性格优势挖掘指南<br>
-        💞 人际关系优化方案
-      </p>
-      <div class="qr-item" style="margin:12px auto;">
-        <img src="wechat-qr.jpg" alt="微信扫码添加" width="130" height="auto" style="border-radius:12px;box-shadow:var(--shadow-md);">
-        <p class="qr-label">微信扫码添加</p>
-      </div>
-      <span class="qr-cta">💚 加好友领手册</span>
-    </div>
-  `;
+function downloadLetter() {
+  const el = document.getElementById('letter-section');
+  if (!el) return;
+  const text = el.querySelector('p').textContent + '\n\n' + el.querySelector('.letter-signature').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ 信件已复制，发给自己或在乎的人吧');
+  }).catch(() => showToast('⚠️ 请长按选择复制'));
 }
 
-function getDonationHTML() {
-  return `
-    <div class="card result-card qr-card" id="donation-section">
-      <h3>☕ 觉得准吗？请我喝杯奶茶</h3>
-      <p style="color:var(--text-secondary);margin-bottom:8px;">
-        你的支持让我继续开发更多有趣测试 ❤️
-      </p>
-      <div class="qr-double">
-        <div class="qr-item">
-          <img src="wepay-qr.jpg" alt="微信赞赏" width="110" height="auto" style="border-radius:12px;box-shadow:var(--shadow-sm);">
-          <p class="qr-label">微信赞赏</p>
-        </div>
-        <div class="qr-item">
-          <img src="alipay-qr.jpg" alt="支付宝打赏" width="110" height="auto" style="border-radius:12px;box-shadow:var(--shadow-sm);">
-          <p class="qr-label">支付宝打赏</p>
-        </div>
+/* ============================================================
+   💳 支付弹窗 + 自动解锁
+   ============================================================ */
+function showPaymentModal() {
+  const typeId = state.resultPersonalityId;
+
+  // 已解锁 → 直接查看
+  if (localStorage.getItem('premium-unlocked-' + typeId) === '1') {
+    window.open('report.html?type=' + typeId, '_blank');
+    return;
+  }
+
+  // 检查是否刚从支付页面返回
+  if (sessionStorage.getItem('pending-payment') === typeId.toString()) {
+    sessionStorage.removeItem('pending-payment');
+    // 自动解锁
+    doUnlock(typeId);
+    return;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'payment-overlay';
+  overlay.id = 'payment-overlay';
+  overlay.innerHTML = `
+    <div class="payment-modal">
+      <button class="payment-close" onclick="closePaymentModal()">✕</button>
+      <div style="text-align:center;font-size:2.5rem;margin-bottom:6px;">🔮</div>
+      <h3>解锁深度报告</h3>
+      <div class="payment-price">¥2.9</div>
+      <div style="text-align:center;margin:0 0 12px;">
+        <span style="background:#fff3e8;color:#e8873a;padding:4px 12px;border-radius:12px;font-size:.8rem;font-weight:600;">
+          ⚡ 今日特价 · 明日恢复 ¥9.9
+        </span>
       </div>
-      <p class="qr-tip">金额随意，心意到了就开心 ✨</p>
+      <p style="color:var(--text-secondary);margin-bottom:6px;text-align:center;font-size:.9rem;">
+        选择支付方式，自动跳转支付页面
+      </p>
+      <p style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-bottom:14px;">
+        支付完成后回到此页面，报告自动解锁 ✨
+      </p>
+
+      <!-- 微信支付按钮 -->
+      <a href="#" class="payment-method-btn wechat-btn" id="btn-wechat-pay">
+        <span class="pm-icon">💚</span>
+        <span class="pm-text">
+          <span class="pm-title">微信支付</span>
+          <span class="pm-sub">跳转微信完成支付</span>
+        </span>
+        <span class="pm-arrow">→</span>
+      </a>
+
+      <p style="text-align:center;font-size:.65rem;color:var(--text-muted);margin-top:12px;">
+        💡 无法跳转？<a href="#" id="btn-fallback-unlock" style="color:var(--accent);">点此使用手动验证</a>
+      </p>
+      <p style="text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:4px;">
+        🔒 解锁后永久有效 · 不满意凭支付截图退款
+      </p>
     </div>
   `;
+  document.body.appendChild(overlay);
+  haptic(20);
+
+  // 绑定微信支付
+  document.getElementById('btn-wechat-pay').addEventListener('click', function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('pending-payment', typeId.toString());
+    window.location.href = PAYMENT_URLS.wechat;
+  });
+
+  // 手动验证降级
+  document.getElementById('btn-fallback-unlock').addEventListener('click', function(e) {
+    e.preventDefault();
+    showManualVerify(typeId);
+  });
 }
+
+function closePaymentModal() {
+  const overlay = document.getElementById('payment-overlay');
+  if (overlay) overlay.remove();
+}
+
+// 自动解锁
+function doUnlock(typeId) {
+  localStorage.setItem('premium-unlocked-' + typeId, '1');
+  incrementUnlockStats();
+  closePaymentModal();
+  showToast('✅ 支付成功！报告已自动解锁！');
+  haptic([20, 50, 20, 80]);
+  setTimeout(() => showBragCard(typeId), 400);
+}
+
+// 手动验证降级方案
+function showManualVerify(typeId) {
+  const code = prompt(
+    '🔐 手动验证\n\n请打开微信/支付宝 → 找到这笔 ¥2.90 的支付记录\n→ 输入交易单号后 6 位数字：\n\n（每个单号仅可使用一次）',
+    ''
+  );
+  if (!code || code.trim().length < 6 || !/^\d{6}$/.test(code.trim())) {
+    showToast('⚠️ 请输入 6 位数字交易单号');
+    return;
+  }
+  if (/^(\d)\1{5}$/.test(code.trim())) {
+    showToast('⚠️ 请输入真实交易单号');
+    return;
+  }
+
+  const usedCodes = JSON.parse(localStorage.getItem('used-txn-codes') || '[]');
+  if (usedCodes.includes(code.trim())) {
+    showToast('⚠️ 该单号已被使用');
+    return;
+  }
+
+  usedCodes.push(code.trim());
+  localStorage.setItem('used-txn-codes', JSON.stringify(usedCodes));
+  doUnlock(typeId);
+}
+
+function showBragCard(typeId) {
+  const p = PERSONALITIES[typeId];
+  const iconMap = ['☀️','🌊','🌿','🌸','🌙','🔥','✨','🏔️','🌌'];
+  const overlay = document.createElement('div');
+  overlay.className = 'brag-overlay';
+  overlay.id = 'brag-overlay';
+  overlay.innerHTML = `
+    <div class="brag-card">
+      <div class="brag-icon">🎉</div>
+      <h3>解锁成功！</h3>
+      <p style="color:var(--text2);margin:4px 0;">你已解锁 <strong>${p.name}·完整深度报告</strong></p>
+      <span class="brag-tag" style="background:${p.color};">${iconMap[typeId]} ${p.name} · ${p.traits[0]}者</span>
+      <p style="font-size:.8rem;color:var(--text2);margin:10px 0;">📸 截这张图发朋友圈<br>看看谁和你同色！</p>
+      <div class="brag-btns">
+        <button class="brag-view" onclick="closeBragCard();window.open('report.html?type=${typeId}','_blank')">📖 查看深度报告</button>
+        <button class="brag-share" onclick="closeBragCard()">📤 炫耀完毕</button>
+      </div>
+      <p class="brag-url">w5m5.github.io/personality-test</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  haptic([20,40,20,80]);
+}
+
+function closeBragCard() {
+  const overlay = document.getElementById('brag-overlay');
+  if (overlay) overlay.remove();
+}
+
+/* ============================================================
+   ⏰ 限时倒计时
+   ============================================================ */
+function startCountdown() {
+  const el = document.getElementById('countdown-timer');
+  if (!el) return;
+
+  function update() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    if (diff <= 0) {
+      el.textContent = '已恢复 ¥9.9';
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+// 在 renderResult 渲染后启动倒计时
+const origRenderResult = renderResult;
+renderResult = function() {
+  origRenderResult();
+  setTimeout(startCountdown, 300);
+};
+
+// 点击遮罩关闭
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'payment-overlay') {
+    closePaymentModal();
+  }
+});
 
 /* ============================================================
    本地存储：保存/恢复进度
@@ -2697,8 +3395,13 @@ function renderQuestion(direction = 'next') {
   quizProgressPct.textContent = `${pct}%`;
   quizProgressFill.style.width = `${pct}%`;
 
-  // 更新题目编号
-  quizQNum.textContent = `Q${idx}`;
+  // 更新题目编号（含维度标签）
+  const dim = QUESTION_DIMENSIONS[state.currentQuestion] || '';
+  quizQNum.innerHTML = `Q${idx} <span class="quiz-dim-tag">${dim}</span>`;
+
+  // 🎨 根据维度切换卡片背景
+  quizCard.style.background = DIMENSION_COLORS[dim] || 'var(--bg-card)';
+  quizCard.style.transition = 'background 0.6s ease';
 
   // 切题动画
   const animClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
@@ -2990,8 +3693,9 @@ function renderResult() {
     </div>
 
     ${getPremiumHTML()}
-    ${getWechatFunnelHTML()}
-    ${getDonationHTML()}
+    ${getCelebrityHTML()}
+    ${getBadgeHTML()}
+    ${getLetterHTML()}
     ${getBarnumHTML()}
     ${renderStatsHTML(state.resultPersonalityId)}
   `;
